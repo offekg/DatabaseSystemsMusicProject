@@ -2,7 +2,7 @@ import csv
 import requests
 import json
 
-with open('artists2.csv','r',encoding="utf8") as csvfile:
+with open('csv_files/artists.csv','r',encoding="utf8") as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
     for row in readCSV:
         artist=row[1].replace(" ", "_")
