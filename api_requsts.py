@@ -12,9 +12,7 @@ with open('csv_files/artists.csv','r',encoding="utf8") as csvfile:
         #artist row details
         artist_id= int(artist_details['idArtist'])  #what if null??
         artist_born_year = int(artist_details['intBornYear'])  #what if null??
-        artist_died_year =artist_details['intDiedYear']   #what if null??
-        if artist_died_year is not None:
-            artist_died_year = int(artist_details['intDiedYear'])
+
         artist_genre = artist_details['strGenre']
         artist_bio = artist_details['strBiographyEN']
         artist_gender=artist_details['strGender']
