@@ -1,6 +1,6 @@
 import csv
-
 countries=[] #empty list
+
 with open('csv_files/countries.csv','r',encoding="utf-8-sig") as csvfile:
     countriesCSV = csv.reader(csvfile, delimiter=',')
     for row in countriesCSV:
@@ -15,7 +15,7 @@ with open('csv_files/countries.csv','r',encoding="utf-8-sig") as csvfile:
                 artist_and_song= song[1].split(" - ")
                 artist=artist_and_song[0].replace(" ", "_")
                 song_name=artist_and_song[1].replace(" ", "_")
-                num_played=song[7].replace(",", "")
+                num_played=int(song[7].replace(",", ""))
                 print(artist)
                 print(song_name)
                 print(num_played)
