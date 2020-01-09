@@ -8,14 +8,14 @@ file_name="us.csv"
 
 with open(file_name, 'w') as csv_file:
     soup = BeautifulSoup(page.text, 'html.parser')
-    title= soup.find_all(class_="text mp")
+    all_table_lines= soup.find_all(class_="text mp")
     all_songs=[]
-    for t in title:
-        songs=t.find_all('a')
-        artist_song=[]
-        for i in songs:
-            artist_song.append(i.contents[0])
-        all_songs.append(artist_song)
+    for line in all_table_lines:
+        tracks=line.find_all('a')
+        artist_track=[]
+        for track in tracks:
+            artist_track.append(track.contents[0])
+        all_songs.append(artist_track)
 
     print(all_songs)
     print(len(all_songs))
