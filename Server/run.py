@@ -1,6 +1,6 @@
 from templates import app
 
-app.port = 9876
+app.port = 98761
 app.debug = True
 app.testing = True
 app.run()
