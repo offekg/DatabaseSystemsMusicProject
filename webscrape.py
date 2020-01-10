@@ -25,7 +25,7 @@ with open(file_name, 'w') as csv_file:
 with open(file_name, 'w') as csv_file:
     soup = BeautifulSoup(page.text, 'html.parser')
     #print(soup.prettify())
-    all_table_lines= soup.find_all(class_="d0")
+    all_table_lines= soup.find_all(class_="d0")    ##there is also d1 and d2!!!
     all_songs=[]
     listens = []
     for line in all_table_lines:
