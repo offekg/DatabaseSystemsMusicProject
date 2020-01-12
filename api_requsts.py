@@ -1,10 +1,13 @@
 import csv
 import requests
 
-with open('csv_files/artists.csv','r',encoding="utf8") as csvfile:
+with open('artists.csv','r',encoding="utf8") as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
     for row in readCSV:
         artist_name=row[1].replace(" ", "_")
+
+        #CHECK IF ARTIST IN CHARTS?
+
         response_artists= requests.get("http://theaudiodb.com/api/v1/json/1/search.php?s="+artist_name)
         response_artists_json=response_artists.json()
         artist_details=response_artists_json['artists'][0]
@@ -12,7 +15,6 @@ with open('csv_files/artists.csv','r',encoding="utf8") as csvfile:
         #artist row details
         artist_id= int(artist_details['idArtist'])  #what if null??
         artist_born_year = int(artist_details['intBornYear'])  #what if null??
-
         artist_genre = artist_details['strGenre']
         artist_bio = artist_details['strBiographyEN']
         artist_gender=artist_details['strGender']

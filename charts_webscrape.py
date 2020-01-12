@@ -1,31 +1,20 @@
-import csv
 import requests
 from bs4 import BeautifulSoup
 
-url = ("https://kworb.net/spotify/country/us_weekly.html")
-page = requests.get(url)
-file_name="us.csv"
-'''
-with open(file_name, 'w') as csv_file:
-    soup = BeautifulSoup(page.text, 'html.parser')
-    print(soup.prettify())
-    all_table_lines= soup.find_all(class_="text mp")
-    all_songs=[]
-    for line in all_table_lines:
-        tracks=line.find_all('a')
-        artist_track=[]
-        for track in tracks:
-            artist_track.append(track.contents[0])
-        all_songs.append(artist_track)
 
-    #print(all_songs)
-    #print(len(all_songs)) '''
+#WHY NOT THE OTHER WAY?? INSERT ALL LISTENS AND CHECK EACH ARTIST BEFORE INSERTING IT
+def check_artist_track_in_db(artist_track):
+    #check if the artist and the track are in the db
+    #if not- we dont insert
+    sql_query= "select... "
 
-
-with open(file_name, 'w') as csv_file:
+def add_charts_to_db():
+    url = ("https://kworb.net/spotify/country/us_weekly.html")   #need to do for all countries
+    page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     #print(soup.prettify())
-    all_table_lines= soup.find_all(class_="d0")    ##there is also d1 and d2!!!
+    #all_table_lines= soup.find_all(class_="d0")    ##there is also d1 and d2!!!
+    all_table_lines = soup.find_all("tr")
     all_songs=[]
     listens = []
     for line in all_table_lines:
@@ -33,7 +22,9 @@ with open(file_name, 'w') as csv_file:
         artist_track=[]
         for track in tracks:
             artist_track.append(track.contents[0])
-        all_songs.append(artist_track)
+        if artist_track!=[] and check_artist_track_in_db(artist_track)==True:
+            all_songs.append(artist_track)
+
         numbers=line.find_all('td')
         i=0
         for num in numbers:
@@ -48,6 +39,8 @@ with open(file_name, 'w') as csv_file:
         l= listens[x]
         print (a,s,l)
         ###INSERT TO TABLE!
+
+add_charts_to_db()
 
 '''
 with open('csv_files/countries.csv','r',encoding="utf-8-sig") as csvfile:

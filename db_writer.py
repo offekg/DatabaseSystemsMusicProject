@@ -98,6 +98,7 @@ def add_listen(cursor, tack_id, country_name, count):
   '''
     cursor.execute(insert_statement, (tack_id, country_name, count))
 
+
 def run():
     # Initializing the connection to the database.
     cnx = init_connection()
@@ -106,25 +107,22 @@ def run():
         exit(1)
     cursor = cnx.cursor()
 
-    # # Dropping previously created tables.
-    # drop_tables(cursor)
+    # Dropping previously created tables.
+    drop_tables(cursor)
 
     # Creating the tables.
     create_tables(cursor)
 
-    # Adding dummy content.
-    add_artist(cursor, 'ido', 1995, 'meleh haolam',
-               'https://www.theaudiodb.com/images/media/artist/thumb/uxrqxy1347913147.jpg')
-    add_album(cursor, "gg", 2012, "pop", None)
-    add_album_artist(cursor,3,1)
-    add_country(cursor, "USA")
-    add_track(cursor, 'ppp', 2034564, 3, 4)
-    add_listen(cursor, 6, "USA", 1444)
+    # # Adding dummy content.
+    # add_artist(cursor, 'ido', 1995, 'meleh haolam',
+    #            'https://www.theaudiodb.com/images/media/artist/thumb/uxrqxy1347913147.jpg')
+    # add_album(cursor, "gg", 2012, "pop", None)
+    # add_album_artist(cursor,3,1)
+    # add_country(cursor, "USA")
+    # add_track(cursor, 'ppp', 2034564, 3, 4)
+    # add_listen(cursor, 6, "USA", 1444)
 
     # Changes commit and cleanup.
     cnx.commit()
     cursor.close()
     cnx.close()
-
-
-run()
