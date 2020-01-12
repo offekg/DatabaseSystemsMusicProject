@@ -1,11 +1,13 @@
 TABLES = {}
 
+CREATION_ORDER = ['artist', 'album','album_artist', 'track', 'country', 'listen']
+DELETION_ORDER = CREATION_ORDER[::-1]
 
 TABLES['artist'] = (
     "CREATE TABLE `artist` ("
     "  `artist_id` INT AUTO_INCREMENT,"
     "  `name` VARCHAR(255) NOT NULL,"
-    "  `born_year` SMALLINT,"
+    "  `born_year` YEAR,"
     "  `bio` TEXT,"
     "  `photo` VARCHAR(255),"
     "  PRIMARY KEY (`artist_id`)"
@@ -15,7 +17,7 @@ TABLES['album'] = (
     "CREATE TABLE `album` ("
     "  `album_id` INT AUTO_INCREMENT,"
     "  `name` VARCHAR(255) NOT NULL,"
-    "  `release_year` SMALLINT,"
+    "  `release_year` YEAR,"
     "  `genre` VARCHAR(30),"
     "  `photo` VARCHAR(255),"
     "  PRIMARY KEY (`album_id`)"
