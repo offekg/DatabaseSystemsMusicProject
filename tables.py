@@ -38,8 +38,9 @@ TABLES['track'] = (
 
 TABLES['country'] = (
     "CREATE TABLE `country` ("
+    "  `country_code` VARCHAR(2) NOT NULL,"
     "  `name` VARCHAR(255) NOT NULL,"
-    "  PRIMARY KEY (`name`)"
+    "  PRIMARY KEY (`country_code`)"
     ") ENGINE=InnoDB")
 
 TABLES['album_artist'] = (
@@ -57,12 +58,12 @@ TABLES['album_artist'] = (
 TABLES['listen'] = (
     "CREATE TABLE `listen` ("
     "  `track_id` INT,"
-    "  `country_name` VARCHAR(255),"
+    "  `country_code` VARCHAR(2),"
     "  `count` INT DEFAULT 0,"
     "  CONSTRAINT fk_track"
     "    FOREIGN KEY (track_id)" 
     "    REFERENCES track(track_id),"
     "  CONSTRAINT fk_country"
-    "    FOREIGN KEY (country_name)" 
-    "    REFERENCES country(name)"
+    "    FOREIGN KEY (country_code)" 
+    "    REFERENCES country(country_code)"
     ") ENGINE=InnoDB")

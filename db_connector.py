@@ -59,12 +59,12 @@ def add_artist(cursor, name, born_year, bio, photo):
     cursor.execute(insert_statement, (name, born_year, bio, photo))
 
 
-def add_country(cursor, name):
+def add_country(cursor, country_code, name):
     insert_statement = '''
-  INSERT INTO country(name) 
-  VALUES (%s)
+  INSERT INTO country(country_code, name) 
+  VALUES (%s, %s)
   '''
-    cursor.execute(insert_statement, (name,))
+    cursor.execute(insert_statement, (country_code, name))
 
 
 def add_album(cursor, name, release_year, genre, photo):
