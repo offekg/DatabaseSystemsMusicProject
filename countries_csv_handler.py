@@ -15,7 +15,7 @@ def add_countries_to_db():
     cnx.commit()
     cursor.close()
     cnx.close()
-
+add_countries_to_db()
             # with open('csv_files/' + country + '.csv', 'r',encoding="utf-8-sig") as csvfile1:
             #     chartsCSV=csv.reader(csvfile1, delimiter=',')
             #     for song in chartsCSV:
