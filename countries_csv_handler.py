@@ -1,5 +1,5 @@
 import csv
-from db_writer import *
+from db_connector import *
 
 def add_countries_to_db():
     cnx = init_connection()

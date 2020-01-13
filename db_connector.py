@@ -98,6 +98,14 @@ def add_listen(cursor, tack_id, country_name, count):
   '''
     cursor.execute(insert_statement, (tack_id, country_name, count))
 
+def get_track_id(cursor, track, artist):
+    query = ('''SELECT track_id 
+                FROM track
+                JOIN album_artist ON track.album_id = album_artist.album_id
+                JOIN artist ON album_artist.artist_id = artist.artist_id
+                WHERE artist.name = %s AND track.name = %s''')
+    cursor.execute(query, (track,artist))
+
 
 def run():
     # Initializing the connection to the database.
