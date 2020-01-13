@@ -103,7 +103,7 @@ def get_track_id(cursor, track, artist):
                 FROM track
                 JOIN album_artist ON track.album_id = album_artist.album_id
                 JOIN artist ON album_artist.artist_id = artist.artist_id
-                WHERE artist.name = %s AND track.name = %s''')
+                WHERE artist.name = "%s" AND track.name = "%s"''')
     cursor.execute(query, (track,artist))
 
 
