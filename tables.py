@@ -38,7 +38,7 @@ TABLES['track'] = (
 
 TABLES['country'] = (
     "CREATE TABLE `country` ("
-    "  `country_code` VARCHAR(2) NOT NULL,"
+    "  `country_code` VARCHAR(6) NOT NULL,"
     "  `name` VARCHAR(255) NOT NULL,"
     "  PRIMARY KEY (`country_code`)"
     ") ENGINE=InnoDB")
@@ -58,7 +58,7 @@ TABLES['album_artist'] = (
 TABLES['listen'] = (
     "CREATE TABLE `listen` ("
     "  `track_id` INT,"
-    "  `country_code` VARCHAR(2),"
+    "  `country_code` VARCHAR(6),"
     "  `count` INT DEFAULT 0,"
     "  CONSTRAINT fk_track"
     "    FOREIGN KEY (track_id)" 
