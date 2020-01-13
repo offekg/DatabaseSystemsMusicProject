@@ -98,13 +98,13 @@ def add_listen(cursor, tack_id, country_code, count):
   '''
     cursor.execute(insert_statement, (tack_id, country_code, count))
 
-def get_track_id(cursor, track, artist):
+def get_track_id(cursor, artist, track):
     query = ('''SELECT track_id 
                 FROM track
                 JOIN album_artist ON track.album_id = album_artist.album_id
                 JOIN artist ON album_artist.artist_id = artist.artist_id
-                WHERE artist.name = "%s" AND track.name = "%s"''')
-    cursor.execute(query, (track,artist))
+                WHERE artist.name = %s AND UPPER(track.name) = UPPER(%s)''')
+    cursor.execute(query, (artist, track))
 
 
 def run():
