@@ -91,12 +91,12 @@ def add_album_artist(cursor, album_id, artist_id):
     cursor.execute(insert_statement, (album_id, artist_id))
 
 
-def add_listen(cursor, tack_id, country_name, count):
+def add_listen(cursor, tack_id, country_code, count):
     insert_statement = '''
-  INSERT INTO listen(track_id, country_name, count) 
+  INSERT INTO listen(track_id, country_code, count) 
   VALUES (%s, %s, %s)
   '''
-    cursor.execute(insert_statement, (tack_id, country_name, count))
+    cursor.execute(insert_statement, (tack_id, country_code, count))
 
 def get_track_id(cursor, track, artist):
     query = ('''SELECT track_id 
