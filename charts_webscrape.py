@@ -6,7 +6,7 @@ import timeit
 
 def add_charts_to_db():
     cnx = init_connection()
-    cursor = cnx.cursor(buffered=True)
+    cursor = cnx.cursor()
     '''
     with open('countries.csv', 'r', encoding="utf-8-sig") as csvfile:
         countriesCSV = csv.reader(csvfile, delimiter=',')
@@ -56,6 +56,7 @@ def add_charts_to_db():
         get_track_id(cursor,a,s)
         track_id=cursor.fetchone()
         if track_id is not None:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             add_listen(cursor, track_id, country_code, l)
 
     # Changes commit and cleanup.
