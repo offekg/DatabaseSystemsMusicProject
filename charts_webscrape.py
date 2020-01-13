@@ -2,14 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 
 
-#WHY NOT THE OTHER WAY?? INSERT ALL LISTENS AND CHECK EACH ARTIST BEFORE INSERTING IT
+#WHY NOT THE OTHER WAY?? INSERT ALL LISTENS AND CHECK EACH ARTIST BED
 def check_artist_track_in_db(artist_track):
     #check if the artist and the track are in the db
     #if not- we dont insert
     sql_query= "select... "
+    return 0;
 
 def add_charts_to_db():
-    url = ("https://kworb.net/spotify/country/us_weekly.html")   #need to do for all countries
+    url = ("https://kworb.net/spotify/country/us_weekly.html")
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     #print(soup.prettify())
@@ -22,7 +23,7 @@ def add_charts_to_db():
         artist_track=[]
         for track in tracks:
             artist_track.append(track.contents[0])
-        if artist_track!=[] and check_artist_track_in_db(artist_track)==True:
+        if artist_track!=[]:
             all_songs.append(artist_track)
 
         numbers=line.find_all('td')
@@ -38,7 +39,9 @@ def add_charts_to_db():
         s= str(all_songs[x][1]).replace(" ", "_")
         l= listens[x]
         print (a,s,l)
-        ###INSERT TO TABLE!
+        track_id=check_artist_track_in_db(a,s)
+        if track_id!=0:
+            ###INSERT TO TABLE!
 
 add_charts_to_db()
 
