@@ -8,7 +8,8 @@ def add_countries_to_db():
         countriesCSV = csv.reader(csvfile, delimiter=',')
         for row in countriesCSV:
             country = str(row[0].replace(" ", "_"))
-            add_country(cursor, country) #insert country to countries relation
+            country_code=str(row[1])
+            add_country(cursor, country_code, country) #insert country to countries relation
 
     # Changes commit and cleanup.
     cnx.commit()
