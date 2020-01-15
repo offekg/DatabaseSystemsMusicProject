@@ -982,19 +982,33 @@ export default function MainSection() {
 }
 
 function UpdatePlaylistData() {
-  rows = [
-    createData(1, "Song #1", "Offek", "Ido", "Yael"),
-    createData(2, "Song #2", 9.0, 37, 4.3),
-    createData(3, "Song #3", 16.0, 24, 6.0),
-    createData(4, "Song #4", 3.7, 67, 4.3),
-    createData(5, "Song #5", 16.0, 49, 3.9),
-    createData(6, "Song #6", 6.0, 24, 4.0),
-    createData(7, "Song #7", 9.0, 37, 4.3),
-    createData(8, "Song #8", 16.0, 24, 6.0),
-    createData(9, "Song #9", 3.7, 67, 4.3),
-    createData(10, "Song #10", 16.0, 49, 3.9)
-  ];
+  rows = [];
+  const Http = new XMLHttpRequest();
+  const url='./timor';
+  Http.open("GET", url);
+  Http.send();
+
+  Http.onreadystatechange = (e) => {
+    console.log(Http.responseText);
+    for (var entry in Http.responseText) {
+      rows.push(createData(entry[0], entry[1], entry[2], 1, 1));
+    }
+  }
+
+  // rows = [
+  //   createData(1, "Song #1", "Offek", "Ido", "Yael"),
+  //   createData(2, "Song #2", 9.0, 37, 4.3),
+  //   createData(3, "Song #3", 16.0, 24, 6.0),
+  //   createData(4, "Song #4", 3.7, 67, 4.3),
+  //   createData(5, "Song #5", 16.0, 49, 3.9),
+  //   createData(6, "Song #6", 6.0, 24, 4.0),
+  //   createData(7, "Song #7", 9.0, 37, 4.3),
+  //   createData(8, "Song #8", 16.0, 24, 6.0),
+  //   createData(9, "Song #9", 3.7, 67, 4.3),
+  //   createData(10, "Song #10", 16.0, 49, 3.9)
+  // ];
 }
+
 function UpdatePlaylistHeaders(queryNum) {
   if (queryNum === 1 || queryNum === 2) {
     columns = [

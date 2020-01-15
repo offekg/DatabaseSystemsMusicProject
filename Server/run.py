@@ -1,6 +1,3 @@
 from templates import app
 
-app.port = 9876
-app.debug = True
-app.testing = True
-app.run()
+app.run(host='0.0.0.0', port=40011)
