@@ -1,6 +1,6 @@
 TABLES = {}
 
-CREATION_ORDER = ['artist', 'album','album_artist', 'track', 'country', 'listen']
+CREATION_ORDER = ['artist', 'album','album_artist', 'track', 'country', 'playlists']
 DELETION_ORDER = CREATION_ORDER[::-1]
 
 TABLES['artist'] = (
