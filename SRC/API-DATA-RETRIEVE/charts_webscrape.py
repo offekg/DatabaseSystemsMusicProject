@@ -2,7 +2,7 @@ import requests
 import csv
 from bs4 import BeautifulSoup
 from db_connector import *
-import timeit
+\
 
 def add_charts_to_db():
     cnx = init_connection()
@@ -10,12 +10,10 @@ def add_charts_to_db():
     with open('countries.csv', 'r', encoding="utf-8-sig") as csvfile:
         countriesCSV = csv.reader(csvfile, delimiter=',')
         for row in countriesCSV:
-            country = str(row[1].replace(" ", "_"))
-            url = ("https://kworb.net/spotify/country/"+country+"_weekly_totals.html")
+            country_code = str(row[1].replace(" ", "_"))
+            url = ("https://kworb.net/spotify/country/"+country_code+"_weekly_totals.html")
             page = requests.get(url)
             soup = BeautifulSoup(page.text, 'html.parser')
-            #print(soup.prettify())
-            #all_table_lines= soup.find_all(class_="d0")    ##there is also d1 and d2!!!
             all_table_lines = soup.find_all("tbody")[0].find_all("tr")
             all_songs=[]
             listens = []
@@ -56,15 +54,3 @@ def add_charts_to_db():
 
 add_charts_to_db()
 
-'''
-with open('csv_files/countries.csv','r',encoding="utf-8-sig") as csvfile:
-    countriesCSV = csv.reader(csvfile, delimiter=',')
-    for row in countriesCSV:
-        country = str(row[0].replace(" ", "_"))
-        url = ("https://kworb.net/spotify/country/" + country +".html")
-        page = requests.get(url)
-        file_name=country+".csv"
-        with open(file_name, 'w') as csv_file:
-            soup = BeautifulSoup(page.text, 'html.parser')
-            print (soup.prettify())
-'''

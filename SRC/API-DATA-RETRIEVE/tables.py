@@ -7,7 +7,7 @@ TABLES['artist'] = (
     "CREATE TABLE `artist` ("
     "  `artist_id` INT AUTO_INCREMENT,"
     "  `name` VARCHAR(255) NOT NULL,"
-    "  `born_year` YEAR,"
+    "  `birth_year` YEAR,"
     "  `bio` TEXT,"
     "  `photo` VARCHAR(255),"
     "  PRIMARY KEY (`artist_id`)"
@@ -55,8 +55,8 @@ TABLES['album_artist'] = (
     "    REFERENCES artist(artist_id)"
     ") ENGINE=InnoDB")
 
-TABLES['listen'] = (
-    "CREATE TABLE `listen` ("
+TABLES['playlists'] = (
+    "CREATE TABLE `playlists` ("
     "  `track_id` INT,"
     "  `country_code` VARCHAR(6),"
     "  `count` INT DEFAULT 0,"
