@@ -1,6 +1,6 @@
 TABLES = {}
 
-CREATION_ORDER = ['artist', 'album','album_artist', 'track', 'country', 'playlists']
+CREATION_ORDER = ['artist', 'album','album_artist', 'track', 'country', 'playbacks']
 DELETION_ORDER = CREATION_ORDER[::-1]
 
 TABLES['artist'] = (
@@ -55,8 +55,8 @@ TABLES['album_artist'] = (
     "    REFERENCES artist(artist_id)"
     ") ENGINE=InnoDB")
 
-TABLES['playlists'] = (
-    "CREATE TABLE `playlists` ("
+TABLES['playbacks'] = (
+    "CREATE TABLE `playbacks` ("
     "  `track_id` INT,"
     "  `country_code` VARCHAR(6),"
     "  `count` INT DEFAULT 0,"
