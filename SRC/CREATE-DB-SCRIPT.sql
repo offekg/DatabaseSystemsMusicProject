@@ -1,7 +1,7 @@
 CREATE TABLE `artist` (
   `artist_id` INT AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `born_year` YEAR,
+  `birth_year` YEAR,
   `bio` TEXT,
   `photo` VARCHAR(255),
   PRIMARY KEY (`artist_id`)
@@ -46,7 +46,7 @@ CREATE TABLE `album_artist` (
     REFERENCES artist(artist_id)
 );
 
-CREATE TABLE `listen` (
+CREATE TABLE `playbacks` (
   `track_id` INT,
   `country_code` VARCHAR(6),
   `count` INT DEFAULT 0,

@@ -11,6 +11,8 @@ def add_charts_to_db():
         countriesCSV = csv.reader(csvfile, delimiter=',')
         for row in countriesCSV:
             country_code = str(row[1].replace(" ", "_"))
+            if not country_code == "us":
+                continue
             url = ("https://kworb.net/spotify/country/"+country_code+"_weekly_totals.html")
             page = requests.get(url)
             soup = BeautifulSoup(page.text, 'html.parser')
@@ -45,7 +47,7 @@ def add_charts_to_db():
                 if result is not None:
                     track_id = result[0]
                     if track_id is not None:
-                        add_listen(cursor, track_id, country_code, l)
+                        add_playbacks(cursor, track_id, country_code, l)
 
     # Changes commit and cleanup.
     cnx.commit()

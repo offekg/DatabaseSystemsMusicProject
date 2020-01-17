@@ -51,12 +51,12 @@ def drop_tables(cursor):
         cursor.execute("DROP TABLE {}".format(table_name))
 
 
-def add_artist(cursor, name, born_year, bio, photo):
+def add_artist(cursor, name, birth_year, bio, photo):
     insert_statement = '''
-  INSERT INTO artist(name, born_year, bio, photo) 
+  INSERT INTO artist(name, birth_year, bio, photo) 
   VALUES (%s, %s, %s, %s)
   '''
-    cursor.execute(insert_statement, (name, born_year, bio, photo))
+    cursor.execute(insert_statement, (name, birth_year, bio, photo))
 
 
 def add_country(cursor, country_code, name):
@@ -77,7 +77,7 @@ def add_album(cursor, name, release_year, genre, photo):
 
 def add_track(cursor, name, duration, album_id, track_number):
     insert_statement = '''
-  INSERT INTO track(name, duration, album_id, track_number) 
+  INSERT INTO track(name, duration, album_id, track_number)
   VALUES (%s, %s, %s, %s)
   '''
     cursor.execute(insert_statement, (name, duration, album_id, track_number))
@@ -91,9 +91,9 @@ def add_album_artist(cursor, album_id, artist_id):
     cursor.execute(insert_statement, (album_id, artist_id))
 
 
-def add_listen(cursor, tack_id, country_code, count):
+def add_playbacks(cursor, tack_id, country_code, count):
     insert_statement = '''
-  INSERT INTO listen(track_id, country_code, count) 
+  INSERT INTO playbacks(track_id, country_code, count) 
   VALUES (%s, %s, %s)
   '''
     cursor.execute(insert_statement, (tack_id, country_code, count))
@@ -107,7 +107,7 @@ def get_track_id(cursor, artist, track):
     cursor.execute(query, (artist, track))
 
 
-def run():
+def reset_database():
     # Initializing the connection to the database.
     cnx = init_connection()
     if cnx is None:
