@@ -58,9 +58,8 @@ artist_songs.max_song AS most_played_song, artist_songs.play_count AS most_playe
 artist_playbacks.photo
 FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS photo, ROUND(AVG(p.count)) AS average_artist_playback,
 		SUM(p.count) sum_artist_playbacks, MAX(p.count) AS max_artist_playbacks
-		FROM artist ar, track t, album al, album_artist alar, playbacks p 
+		FROM artist ar, track t, album_artist alar, playbacks p 
 		WHERE t.track_id = p.track_id
-		AND t.album_id = al.album_id
 		AND t.album_id = alar.album_id
 		AND ar.artist_id = alar.artist_id
 		AND p.country_code = "global"
@@ -68,7 +67,6 @@ FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS phot
 		ORDER BY AVG(p.count) DESC
 		LIMIT 10) AS artist_playbacks
 		JOIN (SELECT aa.artist_id AS art_id, t.name AS max_song, l.count AS play_count
-				#SELECT t.album_id AS aid, l.count play_count, t.name max_song
 				FROM track t, playbacks l, album_artist aa
 				WHERE t.track_id = l.track_id AND l.country_code = "global"
 				AND t.album_id = aa.album_id) artist_songs 
@@ -76,6 +74,27 @@ FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS phot
 		AND artist_playbacks.max_artist_playbacks = artist_songs.play_count
 ORDER BY artist_playbacks.average_artist_playback DESC"""
     return query
+
+
+def query5_longest_albums():
+    query = """"
+SELECT album_name, artist_name, album_length, t.name AS longest_song, longest_song, album_photo
+FROM 
+	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
+	SUM(track.duration) AS album_length, MAX(track.duration) AS longest_song, album.photo AS album_photo
+	FROM track, album, artist, album_artist
+	WHERE track.album_id = album.album_id
+	AND track.album_id = album_artist.album_id
+	AND artist.artist_id = album_artist.artist_id
+	GROUP BY track.album_id, album.name, artist.name
+	ORDER BY SUM(track.duration) DESC
+	LIMIT 10
+	) AS longest_albums 
+JOIN track t
+ON longest_albums.album_id = t.album_id AND longest_albums.longest_song = t.duration
+ORDER BY album_length DESC"""
+    return query
+
 
 
 print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
