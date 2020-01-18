@@ -77,7 +77,7 @@ ORDER BY artist_playbacks.average_artist_playback DESC"""
 
 
 def query5_longest_albums():
-    query = """"
+    query = """
 SELECT album_name, artist_name, album_length, t.name AS longest_song, longest_song, album_photo
 FROM 
 	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
@@ -96,6 +96,24 @@ ORDER BY album_length DESC"""
     return query
 
 
+def query6_most_played_between_year1_year2(year1,year2):
+    query = """
+SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
+		 track.track_number AS track_number, playbacks.count AS total_plays, album.release_year AS release_year
+FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
+LEFT JOIN 
+((album INNER JOIN album_artist ON album.album_id = album_artist.album_id)
+ INNER JOIN artist ON album_artist.artist_id = artist.artist_id)
+	ON track.album_id = album.album_id
+WHERE playbacks.country_code = "global"
+AND album.release_year >= {0}
+AND album.release_year <= {1}
+ORDER BY playbacks.count DESC
+LIMIT 10""".format(year1, year2)
+    return query
+
+
 
 print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
 print(query3_top_albums_by_global_playback())
+print(query6_most_played_between_year1_year2(2000,2012))
