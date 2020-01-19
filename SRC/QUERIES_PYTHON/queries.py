@@ -1,7 +1,5 @@
-
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(" ")
-
 
     query = """
 SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
@@ -16,7 +14,6 @@ WHERE ("""
     query += "country.name =  {0}\n".format(countries[0])
     for i in range(1, len(countries)):
         query += "\tOR country.name = {0}\n".format(countries[i])
-
 
     query += """\t)
 GROUP BY track.track_id, track.name, track.duration, artist.name ,album.name
@@ -95,7 +92,7 @@ ORDER BY album_length DESC"""
     return query
 
 
-def query6_most_played_between_year1_year2(year1,year2):
+def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
 		 track.track_number AS track_number, playbacks.count AS total_plays, album.release_year AS release_year

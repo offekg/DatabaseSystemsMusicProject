@@ -48,7 +48,7 @@ def create_tables(cursor):
 
 def drop_tables(cursor):
     for table_name in DELETION_ORDER:
-        cursor.execute("DROP TABLE {}".format(table_name))
+        cursor.execute("DROP TABLE IF EXISTS {}".format(table_name))
 
 
 def add_artist(cursor, name, birth_year, bio, photo):
@@ -106,6 +106,14 @@ def get_track_id(cursor, artist, track):
                 WHERE artist.name = %s AND UPPER(track.name) = UPPER(%s)''')
     cursor.execute(query, (artist, track))
 
+def create_dummy_content(cursor):
+    add_artist(cursor, 'ido', 1995, 'meleh haolam',
+               'https://www.theaudiodb.com/images/media/artist/thumb/uxrqxy1347913147.jpg')
+    add_album(cursor, "gg", 2012, "pop", None)
+    add_album_artist(cursor,3,1)
+    add_country(cursor, "USA")
+    add_track(cursor, 'ppp', 2034564, 3, 4)
+    add_playbacks(cursor, 6, "USA", 1444)
 
 def reset_database():
     # Initializing the connection to the database.
@@ -120,15 +128,6 @@ def reset_database():
 
     # Creating the tables.
     create_tables(cursor)
-
-    # # Adding dummy content.
-    # add_artist(cursor, 'ido', 1995, 'meleh haolam',
-    #            'https://www.theaudiodb.com/images/media/artist/thumb/uxrqxy1347913147.jpg')
-    # add_album(cursor, "gg", 2012, "pop", None)
-    # add_album_artist(cursor,3,1)
-    # add_country(cursor, "USA")
-    # add_track(cursor, 'ppp', 2034564, 3, 4)
-    # add_listen(cursor, 6, "USA", 1444)
 
     # Changes commit and cleanup.
     cnx.commit()

@@ -1,10 +1,11 @@
 import csv
 import requests
 from db_connector import *
+import theaudiodb_retriever
 from timeit import default_timer as timer
 
 
-def api_to_db(start_index, stop_index):
+def retrieve_and_insert_to_database(start_index, stop_index):
     with open('artists.csv', 'r', encoding="utf-8-sig") as csvfile:
         start = timer()
         cnx = init_connection()
@@ -22,13 +23,8 @@ def api_to_db(start_index, stop_index):
                 break
             artist_name = row[1].replace(" ", "_")
             print(artist_name)
+            response_artists_json = theaudiodb_retriever.get_artist_json(artist_name)
             # CHECK IF ARTIST IN CHARTS?
-            start = timer()
-            response_artists = requests.get("http://theaudiodb.com/api/v1/json/1/search.php?s=" + artist_name)
-
-            response_artists_json = response_artists.json()
-            end = timer()
-            print("Artist response time: ", end - start)
             if response_artists_json['artists'] is None:
                 continue
             artist_details = response_artists_json['artists'][0]
@@ -37,7 +33,7 @@ def api_to_db(start_index, stop_index):
             artist_id = int(artist_details['idArtist'])  # what if null??
             artist_birth_year = artist_details['intBornYear']  # what if null??
             artist_bio = artist_details['strBiographyEN']
-            artist_photo_url = artist_details['strArtistThumb']
+            artist_photo_url = None if artist_details['strArtistThumb'] == "" else artist_details['strArtistThumb']
             start = timer()
             add_artist(cursor, artist_name.replace("_", " "), artist_birth_year, artist_bio, artist_photo_url)
             end = timer()
@@ -45,25 +41,20 @@ def api_to_db(start_index, stop_index):
             artist_db_id = cursor.lastrowid
 
             # albums details -per artist
-            start = timer()
-            response_albums = requests.get("https://theaudiodb.com/api/v1/json/1/album.php?i=" + str(artist_id))
-            response_albums_json = response_albums.json()
-            end = timer()
-            print("Albums response time: ",end - start)
+            response_albums_json =theaudiodb_retriever.get_albums_for_artist_json(artist_id)
             for album in response_albums_json['album']:
                 album_id = int(album['idAlbum'])
                 album_name = album['strAlbum']
                 album_release_year = album['intYearReleased']
-                album_photo_url = album['strAlbumThumb']
-                album_genre = album['strGenre']
+                album_photo_url = None if album['strAlbumThumb'] == "" else album['strAlbumThumb']
+                album_genre = None if album['strGenre'] == "" else album['strGenre']
 
                 add_album(cursor, album_name, album_release_year, album_genre, album_photo_url)
                 album_db_id = cursor.lastrowid
                 add_album_artist(cursor, album_db_id, artist_db_id)
 
                 # track details -per album
-                response_tracks = requests.get("https://theaudiodb.com/api/v1/json/1/track.php?m=" + str(album_id))
-                response_tracks_json = response_tracks.json()
+                response_tracks_json = theaudiodb_retriever.get_tracks_for_album_json(album_id)
                 for track in response_tracks_json['track']:
                     track_name = track['strTrack']
                     track_duration_millisec = track['intDuration']
@@ -76,4 +67,4 @@ def api_to_db(start_index, stop_index):
         cnx.close()
 
 
-api_to_db(0, 25)
+retrieve_and_insert_to_database(0, 5)
