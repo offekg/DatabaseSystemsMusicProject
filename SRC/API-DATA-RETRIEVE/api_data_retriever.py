@@ -42,6 +42,8 @@ def retrieve_and_insert_to_database(start_index, stop_index):
 
             # albums details -per artist
             response_albums_json =theaudiodb_retriever.get_albums_for_artist_json(artist_id)
+            if response_albums_json['album'] is None:
+                continue
             for album in response_albums_json['album']:
                 album_id = int(album['idAlbum'])
                 album_name = album['strAlbum']
