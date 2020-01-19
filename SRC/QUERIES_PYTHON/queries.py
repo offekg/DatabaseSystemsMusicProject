@@ -6,13 +6,12 @@ def query2_top_playbacks_per_countries(all_countries):
     query = """
 SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
 	 track.duration AS duration, album.name AS album_name
-FROM track, playbacks, country,album, artist, album_artist
-WHERE track.track_id = playbacks.track_id
-AND playbacks.country_code = country.country_code
-AND track.album_id = album.album_id
-AND track.album_id = album_artist.album_id
-AND artist.artist_id = album_artist.artist_id
-AND ("""
+FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
+LEFT JOIN country ON playbacks.country_code = country.country_code
+LEFT JOIN album ON track.album_id = album.album_id
+LEFT JOIN album_artist ON track.album_id = album_artist.album_id 
+LEFT JOIN artist ON artist.artist_id = album_artist.artist_id
+WHERE ("""
 
     query += "country.name =  {0}\n".format(countries[0])
     for i in range(1, len(countries)):
@@ -141,7 +140,7 @@ ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
     return query
 
 
-print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
+"""print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
 print(query3_top_albums_by_global_playback())
 print(query6_most_played_between_year1_year2(2000,2012))
-print(query7_top_song_from_top_artist_in_genre("rock"))
+print(query7_top_song_from_top_artist_in_genre("rock"))"""
