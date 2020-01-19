@@ -113,7 +113,35 @@ LIMIT 10""".format(year1, year2)
     return query
 
 
+def query7_top_song_from_top_artist_in_genre(genre):
+    query = """
+SELECT top_track_name, top_track_plays, artist_name, top_track_album, total_artist_plays_in_genre
+FROM 
+	(#top 10 artists in genre:
+	SELECT ar.artist_id as artist_id, ar.name AS artist_name,
+	       SUM(p.count) AS total_artist_plays_in_genre, MAX(p.count) max_song_plays, al.genre
+	FROM artist ar, track t, playbacks p, album_artist alar, album al
+	WHERE t.track_id = p.track_id
+	AND t.album_id = alar.album_id
+	AND alar.artist_id = ar.artist_id
+	AND t.album_id = al.album_id
+	AND al.genre = "{}"
+	GROUP BY ar.artist_id, ar.name
+	ORDER BY SUM(p.count) DESC
+	LIMIT 10) AS top_singers
+JOIN (SELECT t2.name AS top_track_name, ar2.artist_id AS ar_id, al2.name AS top_track_album,
+				 p2.count AS top_track_plays
+		FROM track t2, artist ar2, album al2, album_artist alar2, playbacks p2
+		WHERE t2.album_id = alar2.album_id 
+		AND ar2.artist_id = alar2.artist_id
+		AND t2.album_id = al2.album_id
+		AND t2.track_id = p2.track_id) AS tracks_plays
+ON top_singers.artist_id = tracks_plays.ar_id AND top_singers.max_song_plays = tracks_plays.top_track_plays
+ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
+    return query
+
 
 print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
 print(query3_top_albums_by_global_playback())
 print(query6_most_played_between_year1_year2(2000,2012))
+print(query7_top_song_from_top_artist_in_genre("rock"))

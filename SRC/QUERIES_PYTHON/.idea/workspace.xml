@@ -28,12 +28,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="452" />
+          <entry key="py" value="522" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="452" />
+          <entry key="Python" value="522" />
         </counts>
       </usages-collector>
     </session>
@@ -43,11 +43,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/queries.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="107" column="39" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
+            <state relative-caret-position="465">
+              <caret line="142" lean-forward="true" selection-start-line="142" selection-end-line="142" />
               <folding>
-                <marker date="1579386491214" expanded="true" signature="924:1968" ph="..." />
-                <marker date="1579386491214" expanded="true" signature="4112:4765" ph="..." />
+                <marker date="1579395585436" expanded="true" signature="924:1968" ph="..." />
+                <marker date="1579395585436" expanded="true" signature="4782:5938" ph="..." />
               </folding>
             </state>
           </provider>
@@ -165,7 +165,7 @@
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.2366548" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2188612" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26868328" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -181,11 +181,11 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/queries.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="107" column="39" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
+        <state relative-caret-position="465">
+          <caret line="142" lean-forward="true" selection-start-line="142" selection-end-line="142" />
           <folding>
-            <marker date="1579386491214" expanded="true" signature="924:1968" ph="..." />
-            <marker date="1579386491214" expanded="true" signature="4112:4765" ph="..." />
+            <marker date="1579395585436" expanded="true" signature="924:1968" ph="..." />
+            <marker date="1579395585436" expanded="true" signature="4782:5938" ph="..." />
           </folding>
         </state>
       </provider>
