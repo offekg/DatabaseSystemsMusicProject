@@ -4,13 +4,17 @@ import Fab from "@material-ui/core/Fab";
 import Box from "@material-ui/core/Box";
 import Zoom from "@material-ui/core/Zoom";
 import Link from "@material-ui/core/Link";
+import Fade from "@material-ui/core/Fade";
 import Input from "@material-ui/core/Input";
 import Table from "@material-ui/core/Table";
+import Modal from "@material-ui/core/Modal";
+import Paper from "@material-ui/core/Paper";
 import Rating from "@material-ui/lab/Rating";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 import { green } from "@material-ui/core/colors";
+import Backdrop from "@material-ui/core/Backdrop";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
@@ -74,6 +78,17 @@ const useStyles = makeStyles(theme => ({
     left: "50%",
     marginTop: -12,
     marginLeft: -12
+  },
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    maxWidth: "60%"
   }
 }));
 
@@ -145,6 +160,16 @@ function PlaylistManager() {
 
   var delay = -200;
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -186,7 +211,88 @@ function PlaylistManager() {
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.id === "name" ? (
-                              <Link href="#">{value}</Link>
+                              <div>
+                                <Link onClick={handleClickOpen}>{value}</Link>
+                                <Modal
+                                  aria-labelledby="additional-info"
+                                  aria-describedby="additional-info"
+                                  className={classes.modal}
+                                  open={open}
+                                  onClose={handleClose}
+                                  closeAfterTransition
+                                  BackdropComponent={Backdrop}
+                                  BackdropProps={{
+                                    timeout: 500
+                                  }}
+                                >
+                                  <Fade in={open}>
+                                    <div className={classes.paper}>
+                                      <table color="white">
+                                        <tr>
+                                          <td height="10%">
+                                            <h2 id="modal-title">
+                                              Artist: Ed Sheeran
+                                            </h2>
+                                          </td>
+                                          <td rowspan="2">
+                                            <Paper
+                                              zDepth={5}
+                                              circle={true}
+                                              style={{
+                                                overflow: "hidden",
+                                                borderBottomLeftRadius: "50%",
+                                                borderTopLeftRadius: "50%"
+                                                // borderBottomRightRadius: "15%",
+                                                // borderTopRightRadius: "15%"
+                                              }}
+                                            >
+                                              <img
+                                                width="200px"
+                                                height="250px"
+                                                alt="stam"
+                                                src="https://upload.wikimedia.org/wikipedia/commons/5/55/Ed_Sheeran_2013.jpg"
+                                              />
+                                            </Paper>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <h4 id="modal-description">
+                                              Biography: Edward Christopher "Ed"
+                                              Sheeran (born 17 February 1991) is
+                                              an English singer-songwriter and
+                                              musician. He was born in Hebden
+                                              Bridge in Yorkshire and raised in
+                                              Framlingham, Suffolk. He dropped
+                                              out of school at 16, and moved to
+                                              London the following year, in
+                                              2008, to pursue a career in music.
+                                              In early 2011, Sheeran
+                                              independently released the
+                                              extended play, No. 5
+                                              Collaborations Project, which
+                                              caught the attention of Elton John
+                                              and Jamie Foxx. After signing with
+                                              Asylum Records, his debut album, +
+                                              (read as "plus"), was released on
+                                              9 September 2011 and has since
+                                              been certified six-times platinum
+                                              in the UK. The album contains the
+                                              single, "The A Team", which earned
+                                              him the Ivor Novello Award for
+                                              Best Song Musically and Lyrically.
+                                              In 2012, Sheeran won the Brit
+                                              Awards for Best British Male Solo
+                                              Artist and British Breakthrough
+                                              Act….
+                                            </h4>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </div>
+                                  </Fade>
+                                </Modal>
+                              </div>
                             ) : (
                               value
                             )}
