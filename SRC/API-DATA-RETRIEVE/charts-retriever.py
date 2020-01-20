@@ -2,7 +2,7 @@ import requests
 import csv
 from bs4 import BeautifulSoup
 from db_connector import *
-\
+
 
 def add_charts_to_db():
     cnx = init_connection()
@@ -11,8 +11,7 @@ def add_charts_to_db():
         countriesCSV = csv.reader(csvfile, delimiter=',')
         for row in countriesCSV:
             country_code = str(row[1].replace(" ", "_"))
-            if not country_code == "us":
-                continue
+            print("========================", country_code, "========================")
             url = ("https://kworb.net/spotify/country/"+country_code+"_weekly_totals.html")
             page = requests.get(url)
             soup = BeautifulSoup(page.text, 'html.parser')
@@ -36,8 +35,8 @@ def add_charts_to_db():
 
                 cells = line.find_all('td')
                 listens.append(int(str(cells[7].contents[0]).replace(",","")))
-
-            for x in range(0,len(all_songs)):
+            i = min(200, len(all_songs))
+            for x in range(0,i):
                 a= str(all_songs[x][0])
                 s= str(all_songs[x][1])
                 l= listens[x]

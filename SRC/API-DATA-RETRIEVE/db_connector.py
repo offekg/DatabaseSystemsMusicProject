@@ -125,7 +125,6 @@ def reset_database():
 
     # Dropping previously created tables.
     drop_tables(cursor)
-
     # Creating the tables.
     create_tables(cursor)
 

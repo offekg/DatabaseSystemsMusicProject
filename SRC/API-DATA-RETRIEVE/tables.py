@@ -64,7 +64,7 @@ TABLES['playbacks'] = ('''
     CREATE TABLE `playbacks` (
       `track_id` INT,
       `country_code` VARCHAR(6),
-      `count` INT DEFAULT 0,
+      `count` BIGINT DEFAULT 0,
       INDEX `count_index` (`count`),
       CONSTRAINT fk_track
         FOREIGN KEY (track_id)
