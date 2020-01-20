@@ -42,26 +42,26 @@ def retrieve_and_insert_to_database(start_index, stop_index):
 
             # albums details -per artist
             response_albums_json =theaudiodb_retriever.get_albums_for_artist_json(artist_id)
-            if response_albums_json['album'] is None:
-                continue
-            for album in response_albums_json['album']:
-                album_id = int(album['idAlbum'])
-                album_name = album['strAlbum']
-                album_release_year = album['intYearReleased']
-                album_photo_url = None if album['strAlbumThumb'] == "" else album['strAlbumThumb']
-                album_genre = None if album['strGenre'] == "" else album['strGenre']
+            if response_albums_json['album'] is not None:
+                for album in response_albums_json['album']:
+                    album_id = int(album['idAlbum'])
+                    album_name = album['strAlbum']
+                    album_release_year = album['intYearReleased']
+                    album_photo_url = None if album['strAlbumThumb'] == "" else album['strAlbumThumb']
+                    album_genre = None if album['strGenre'] == "" else album['strGenre']
 
-                add_album(cursor, album_name, album_release_year, album_genre, album_photo_url)
-                album_db_id = cursor.lastrowid
-                add_album_artist(cursor, album_db_id, artist_db_id)
+                    add_album(cursor, album_name, album_release_year, album_genre, album_photo_url)
+                    album_db_id = cursor.lastrowid
+                    add_album_artist(cursor, album_db_id, artist_db_id)
 
-                # track details -per album
-                response_tracks_json = theaudiodb_retriever.get_tracks_for_album_json(album_id)
-                for track in response_tracks_json['track']:
-                    track_name = track['strTrack']
-                    track_duration_millisec = track['intDuration']
-                    track_number = track['intTrackNumber']
-                    add_track(cursor, track_name, track_duration_millisec, album_db_id, track_number)
+                    # track details -per album
+                    response_tracks_json = theaudiodb_retriever.get_tracks_for_album_json(album_id)
+                    if response_tracks_json['track'] is not None:
+                        for track in response_tracks_json['track']:
+                            track_name = track['strTrack']
+                            track_duration_millisec = track['intDuration']
+                            track_number = track['intTrackNumber']
+                            add_track(cursor, track_name, track_duration_millisec, album_db_id, track_number)
 
         # Changes commit and cleanup.
         cnx.commit()
@@ -69,4 +69,4 @@ def retrieve_and_insert_to_database(start_index, stop_index):
         cnx.close()
 
 
-retrieve_and_insert_to_database(0, 5)
+retrieve_and_insert_to_database(770, 780)
