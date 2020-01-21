@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, jsonify, request
 main_blueprint = Blueprint('main',__name__)
 from templates.main.query import test
-import json
+import simplejson as json
 
 @main_blueprint.route('/')
 def index():
@@ -9,5 +9,5 @@ def index():
 
 @main_blueprint.route('/timor', methods=['GET'])
 def timor():
-	print(request.args.get('arg1'))
-	return jsonify(test())
+	query_num = request.args.get('queryNum')
+	return json.dumps(test(query_num))

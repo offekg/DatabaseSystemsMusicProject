@@ -118,8 +118,8 @@ const top100Films = [
   { title: "Fight Club", year: 1999 }
 ];
 
-function createData(place, name, artist, arg1, arg2) {
-  return { place, name, artist, arg1, arg2 };
+function createData(arg1, arg2, arg3, arg4, arg5) {
+  return { arg1, arg2, arg3, arg4, arg5 };
 }
 
 var columns = [];
@@ -335,6 +335,7 @@ function QueryArgs1() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="1" />
       <div align="center">
         <FormControlLabel
           control={<Switch value="explicit" color="primary" />}
@@ -415,6 +416,7 @@ function QueryArgs2() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="2" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -489,6 +491,7 @@ function QueryArgs3() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="3" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -563,6 +566,7 @@ function QueryArgs4() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="4" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -637,6 +641,7 @@ function QueryArgs5() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="5" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -711,6 +716,7 @@ function QueryArgs6() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="6" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -785,6 +791,7 @@ function QueryArgs7() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="7" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -876,7 +883,7 @@ export default function MainSection() {
       SetTableBody(<SkeletonLoad />);
       setSuccess(false);
       setLoading(true);
-      UpdatePlaylistData();
+      UpdatePlaylistData(document.getElementById("queryNum").value);
       timer.current = setTimeout(() => {
         setSuccess(true);
         setLoading(false);
@@ -899,8 +906,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs1 />);
             setSelected("1");
+            setArgs(<QueryArgs1 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -924,8 +931,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs2 />);
             setSelected("2");
+            setArgs(<QueryArgs2 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -949,8 +956,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs3 />);
             setSelected("3");
+            setArgs(<QueryArgs3 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -974,8 +981,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs4 />);
             setSelected("4");
+            setArgs(<QueryArgs4 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -999,8 +1006,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs5 />);
             setSelected("5");
+            setArgs(<QueryArgs5 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -1024,8 +1031,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs6 />);
             setSelected("6");
+            setArgs(<QueryArgs6 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -1049,8 +1056,8 @@ export default function MainSection() {
             setSelected("0");
             setSendShown(<p />);
           } else {
-            setArgs(<QueryArgs7 />);
             setSelected("7");
+            setArgs(<QueryArgs7 />);
             setSendShown(
               <SendButton
                 success={success}
@@ -1086,58 +1093,66 @@ export default function MainSection() {
   );
 }
 
-function UpdatePlaylistData() {
-  var some_data = document.getElementById("input-with-icon-adornment").value;
+function UpdatePlaylistData(selected) {
+  //var some_data = document.getElementById("input-with-icon-adornment").value;
 
   const Http = new XMLHttpRequest();
-  const url='./timor?arg1=' + some_data;
+  const url = "./timor?queryNum=" + selected;
   Http.open("GET", url);
-  Http.setRequestHeader('Content-Type', 'application/json');
+  Http.setRequestHeader("Content-Type", "application/json");
   Http.send();
 
-  Http.onreadystatechange = (e) => {
+  Http.onreadystatechange = e => {
     rows = [];
 
     var data = JSON.parse(Http.response);
 
     for (var index = 0; index < data.length; index++) {
-      rows.push(createData(index + 1, data[index][0], data[index][1], data[index][2], 1));
+      var current = data[index];
+      if (current.length === 4)
+        rows.push(
+          createData(current[0], current[1], current[2], current[3])
+        );
+      else
+        rows.push(
+          createData(current[0], current[1], current[2], current[3], current[4])
+        );
     }
 
     console.log(rows);
-  }
+  };
 }
 
 function UpdatePlaylistHeaders(queryNum) {
   if (queryNum === 1 || queryNum === 2) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "artist",
+        id: "arg2",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "album",
+        id: "arg3",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "length",
+        id: "arg4",
         label: "Length",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
       },
       {
-        id: "totalPlayed",
+        id: "arg5",
         label: "Times Played",
         minWidth: 100,
         align: "center",
@@ -1147,32 +1162,32 @@ function UpdatePlaylistHeaders(queryNum) {
   } else if (queryNum === 3) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "artist",
+        id: "arg2",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "totalPlayed",
+        id: "arg3",
         label: "Times Played",
         align: "center",
         minWidth: 100
       },
       {
-        id: "mostPlayedSong",
+        id: "arg4",
         label: "Most Played Song",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
       },
       {
-        id: "image",
+        id: "arg5",
         label: "Album Cover",
         minWidth: 100,
         align: "center"
@@ -1182,32 +1197,32 @@ function UpdatePlaylistHeaders(queryNum) {
   } else if (queryNum === 4) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "averageTimesPlayed",
+        id: "arg2",
         label: "Average Times Played",
         align: "center",
         minWidth: 100
       },
       {
-        id: "mostPlayedSong",
+        id: "arg3",
         label: "Most Played Song",
         align: "center",
         minWidth: 100
       },
       {
-        id: "totalTimesPlayed",
+        id: "arg4",
         label: "Total Times Played",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
       },
       {
-        id: "image",
+        id: "arg5",
         label: "Artist Image",
         minWidth: 100,
         align: "center"
@@ -1217,32 +1232,32 @@ function UpdatePlaylistHeaders(queryNum) {
   } else if (queryNum === 5) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "artist",
+        id: "arg2",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "totalPlayed",
+        id: "arg3",
         label: "Times Played",
         align: "center",
         minWidth: 100
       },
       {
-        id: "longestSong",
+        id: "arg4",
         label: "Longest Song",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
       },
       {
-        id: "image",
+        id: "arg5",
         label: "Album Cover",
         minWidth: 100,
         align: "center"
@@ -1252,25 +1267,25 @@ function UpdatePlaylistHeaders(queryNum) {
   } else if (queryNum === 6) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "artist",
+        id: "arg2",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "album",
+        id: "arg3",
         label: "Album",
         align: "center",
         minWidth: 100
       },
       {
-        id: "releaseData",
+        id: "arg4",
         label: "Release Date",
         minWidth: 100,
         align: "center"
@@ -1280,25 +1295,25 @@ function UpdatePlaylistHeaders(queryNum) {
   } else if (queryNum === 7) {
     columns = [
       {
-        id: "name",
+        id: "arg1",
         label: "Name",
         align: "center",
         minWidth: 100
       },
       {
-        id: "artist",
+        id: "arg2",
         label: "Artist",
         align: "center",
         minWidth: 100
       },
       {
-        id: "album",
+        id: "arg3",
         label: "Album",
         align: "center",
         minWidth: 100
       },
       {
-        id: "playedInGenre",
+        id: "arg4",
         label: "Total Times Played In Genre",
         minWidth: 100,
         align: "center"
