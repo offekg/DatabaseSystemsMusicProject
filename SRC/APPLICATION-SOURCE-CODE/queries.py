@@ -11,9 +11,9 @@ LEFT JOIN album_artist ON track.album_id = album_artist.album_id
 LEFT JOIN artist ON artist.artist_id = album_artist.artist_id
 WHERE ("""
 
-    query += "country.name =  {0}\n".format(countries[0])
+    query += "country.country_code =  {0}\n".format(countries[0])
     for i in range(1, len(countries)):
-        query += "\tOR country.name = {0}\n".format(countries[i])
+        query += "\tOR country.country_code = {0}\n".format(countries[i])
 
     query += """\t)
 GROUP BY track.track_id, track.name, track.duration, artist.name ,album.name
