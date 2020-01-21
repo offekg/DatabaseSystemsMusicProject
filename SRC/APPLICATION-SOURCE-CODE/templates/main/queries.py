@@ -24,7 +24,7 @@ LIMIT 10"""
 
 
 def query3_top_albums_by_global_playback():
-    query = """"
+    query = """
 SELECT album_name, artist_name, total_global_playbacks, tl.max_song AS max_song_name, tl.play_count AS max_song_plays, photo_link
 FROM (SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
 SUM(playbacks.count) AS total_global_playbacks, album.photo AS photo_link, MAX(playbacks.count) AS max_plays
@@ -46,7 +46,7 @@ SUM(playbacks.count) AS total_global_playbacks, album.photo AS photo_link, MAX(p
 
 
 def query4_top_artists_by_avg_global_playbacks():
-    query = """"
+    query = """
 SELECT artist_playbacks.artist_name AS artist_name,
 artist_playbacks.average_artist_playback AS average_artist_playback,
 artist_playbacks.sum_artist_playbacks AS sum_artist_playbacks,
