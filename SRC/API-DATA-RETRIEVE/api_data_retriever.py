@@ -32,8 +32,7 @@ def get_tracks_for_album_json(theaudiodb_album_id):
     return response_tracks.json()
 
 def retrieve_and_insert_to_database(start_index, stop_index):
-    with open('/a/home/cc/students/cs/idolerer/DatabaseSystemsMusicProject-master/SRC/API-DATA-RETRIEVE/artists.csv',
-              'r', encoding="utf-8-sig") as csvfile:
+    with open('artists.csv', 'r', encoding="utf-8-sig") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         count = 0
         print("============================", start_index, stop_index, "============================")
