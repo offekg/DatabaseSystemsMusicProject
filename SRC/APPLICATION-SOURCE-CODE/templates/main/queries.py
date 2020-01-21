@@ -11,9 +11,9 @@ LEFT JOIN album_artist ON track.album_id = album_artist.album_id
 LEFT JOIN artist ON artist.artist_id = album_artist.artist_id
 WHERE ("""
 
-    query += "country.name =  {0}\n".format(countries[0])
+    query += "country.country_code =  \"{0}\"\n".format(countries[0])
     for i in range(1, len(countries)):
-        query += "\tOR country.name = {0}\n".format(countries[i])
+        query += "\tOR country.country_code = {0}\n".format(countries[i])
 
     query += """\t)
 GROUP BY track.track_id, track.name, track.duration, artist.name ,album.name
@@ -74,7 +74,7 @@ ORDER BY artist_playbacks.average_artist_playback DESC"""
 
 def query5_longest_albums():
     query = """
-SELECT album_name, artist_name, album_length, t.name AS longest_song, album_photo
+SELECT album_name, artist_name, album_length, t.name AS longest_song, album_photo, longest_song
 FROM
 	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
 	SUM(track.duration) AS album_length, MAX(track.duration) AS longest_song, album.photo AS album_photo
@@ -95,7 +95,7 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 playbacks.count AS total_plays, album.release_year AS release_year
+		 track.track_number AS track_number, album.release_year AS release_year, playbacks.count AS total_plays
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
 ((album INNER JOIN album_artist ON album.album_id = album_artist.album_id)
