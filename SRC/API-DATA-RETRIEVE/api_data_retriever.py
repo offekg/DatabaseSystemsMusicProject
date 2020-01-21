@@ -4,14 +4,16 @@ from db_connector import *
 import theaudiodb_retriever
 from timeit import default_timer as timer
 
+start = timer()
+cnx = init_connection()
+cursor = cnx.cursor()
+end = timer()
+print("DB connection time : ", end - start)
+
 
 def retrieve_and_insert_to_database(start_index, stop_index):
-    with open('artists.csv', 'r', encoding="utf-8-sig") as csvfile:
-        start = timer()
-        cnx = init_connection()
-        cursor = cnx.cursor()
-        end = timer()
-        print("DB connection time : ",end - start)
+    with open('/a/home/cc/students/cs/idolerer/DatabaseSystemsMusicProject-master/SRC/API-DATA-RETRIEVE/artists.csv',
+              'r', encoding="utf-8-sig") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         count = 0
         print("============================", start_index, stop_index, "============================")
@@ -37,11 +39,11 @@ def retrieve_and_insert_to_database(start_index, stop_index):
             start = timer()
             add_artist(cursor, artist_name.replace("_", " "), artist_birth_year, artist_bio, artist_photo_url)
             end = timer()
-            print("Writing artist to db time: ",end - start)
+            print("Writing artist to db time: ", end - start)
             artist_db_id = cursor.lastrowid
 
             # albums details -per artist
-            response_albums_json =theaudiodb_retriever.get_albums_for_artist_json(artist_id)
+            response_albums_json = theaudiodb_retriever.get_albums_for_artist_json(artist_id)
             if response_albums_json['album'] is not None:
                 for album in response_albums_json['album']:
                     album_id = int(album['idAlbum'])
@@ -63,10 +65,17 @@ def retrieve_and_insert_to_database(start_index, stop_index):
                             track_number = track['intTrackNumber']
                             add_track(cursor, track_name, track_duration_millisec, album_db_id, track_number)
 
-        # Changes commit and cleanup.
+
+i = 0
+while i < 1000:
+    try:
+        retrieve_and_insert_to_database(i, i + 10)
         cnx.commit()
-        cursor.close()
-        cnx.close()
+    except:
+        print("EXCEPTION")
+        cnx.rollback()
+    else:
+        i += 10
 
-
-retrieve_and_insert_to_database(770, 780)
+cursor.close()
+cnx.close()
