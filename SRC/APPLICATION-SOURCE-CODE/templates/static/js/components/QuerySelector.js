@@ -82,7 +82,9 @@ const useStyles = makeStyles(theme => ({
   modal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    zIndex: 1,
+    backgroundColor: (255, 255, 255, 0.4)
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -210,7 +212,7 @@ function PlaylistManager() {
 
                         return (
                           <TableCell key={column.id} align={column.align}>
-                            {column.id === "name" ? (
+                            {column.id === "arg1" ? (
                               <div>
                                 <Link onClick={handleClickOpen}>{value}</Link>
                                 <Modal
@@ -1110,9 +1112,7 @@ function UpdatePlaylistData(selected) {
     for (var index = 0; index < data.length; index++) {
       var current = data[index];
       if (current.length === 4)
-        rows.push(
-          createData(current[0], current[1], current[2], current[3])
-        );
+        rows.push(createData(current[0], current[1], current[2], current[3]));
       else
         rows.push(
           createData(current[0], current[1], current[2], current[3], current[4])
@@ -1128,13 +1128,13 @@ function UpdatePlaylistHeaders(queryNum) {
     columns = [
       {
         id: "arg1",
-        label: "Name",
+        label: "Times Played",
         align: "center",
         minWidth: 100
       },
       {
         id: "arg2",
-        label: "Artist",
+        label: "Name",
         align: "center",
         minWidth: 100
       },
@@ -1153,7 +1153,7 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg5",
-        label: "Times Played",
+        label: "Album",
         minWidth: 100,
         align: "center",
         format: value => value.toFixed(2)
@@ -1188,7 +1188,7 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg5",
-        label: "Album Cover",
+        label: "Total Song Plays",
         minWidth: 100,
         align: "center"
         // format: value => value.toFixed(2)
@@ -1210,16 +1210,16 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg3",
-        label: "Most Played Song",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
         label: "Total Times Played",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
+      },
+      {
+        id: "arg4",
+        label: "Most Played Song",
+        align: "center",
+        minWidth: 100
       },
       {
         id: "arg5",
@@ -1245,7 +1245,7 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg3",
-        label: "Times Played",
+        label: "Album Length",
         align: "center",
         minWidth: 100
       },
@@ -1286,7 +1286,14 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg4",
-        label: "Release Date",
+        label: "Total Times Played",
+        minWidth: 100,
+        align: "center"
+        // format: value => value.toLocaleString()
+      },
+      {
+        id: "arg5",
+        label: "Release year",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
@@ -1302,19 +1309,26 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg2",
-        label: "Artist",
+        label: "Total Times Played",
         align: "center",
         minWidth: 100
       },
       {
         id: "arg3",
-        label: "Album",
+        label: "Artists",
         align: "center",
         minWidth: 100
       },
       {
         id: "arg4",
-        label: "Total Times Played In Genre",
+        label: "Album",
+        minWidth: 100,
+        align: "center"
+        // format: value => value.toLocaleString()
+      },
+      {
+        id: "arg5",
+        label: "Total Plays of Artist in Genre",
         minWidth: 100,
         align: "center"
         // format: value => value.toLocaleString()
