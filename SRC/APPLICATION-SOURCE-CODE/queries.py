@@ -74,15 +74,16 @@ ORDER BY artist_playbacks.average_artist_playback DESC"""
 
 def query5_longest_albums():
     query = """
-SELECT album_name, artist_name, album_length, t.name AS longest_song, album_photo, longest_song
+SELECT album_name, artist_name, album_length, t.name AS longest_song, album_photo, longest_song, 
+longest_albums.album_id, longest_albums.artist_id, track_id
 FROM
 	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
-	SUM(track.duration) AS album_length, MAX(track.duration) AS longest_song, album.photo AS album_photo
+	SUM(track.duration) AS album_length, MAX(track.duration) AS longest_song, album.photo AS album_photo, artist.artist_id AS artist_id
 	FROM track, album, artist, album_artist
 	WHERE track.album_id = album.album_id
 	AND track.album_id = album_artist.album_id
 	AND artist.artist_id = album_artist.artist_id
-	GROUP BY track.album_id, album.name, artist.name
+	GROUP BY track.album_id, album.name, artist.name, artist.artist_id
 	ORDER BY SUM(track.duration) DESC
 	LIMIT 10
 	) AS longest_albums
