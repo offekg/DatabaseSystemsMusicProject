@@ -136,8 +136,9 @@ ON top_singers.artist_id = tracks_plays.ar_id AND top_singers.max_song_plays = t
 ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
     return query
 
-
-"""print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
-print(query3_top_albums_by_global_playback())
-print(query6_most_played_between_year1_year2(2000,2012))
-print(query7_top_song_from_top_artist_in_genre("rock"))"""
+#print(query2_top_playbacks_per_countries("\"us\""))
+#print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
+#print(query3_top_albums_by_global_playback())
+print( query4_top_artists_by_avg_global_playbacks())
+#print(query6_most_played_between_year1_year2(2000,2012))
+#print(query7_top_song_from_top_artist_in_genre("rock"))"""
