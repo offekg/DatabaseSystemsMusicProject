@@ -3,7 +3,7 @@ def query2_top_playbacks_per_countries(all_countries):
 
     query = """
 SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
-	 track.duration AS duration, album.name AS album_name
+	 track.duration AS duration, album.name AS album_name, artist.artist_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN country ON playbacks.country_code = country.country_code
 LEFT JOIN album ON track.album_id = album.album_id
@@ -16,7 +16,7 @@ WHERE ("""
         query += "\tOR country.country_code = {0}\n".format(countries[i])
 
     query += """\t)
-GROUP BY track.track_id, track.name, track.duration, artist.name ,album.name
+GROUP BY track.track_id, track.name, track.duration, artist.name, artist.artist_id ,album.name
 ORDER BY SUM(playbacks.count) DESC
 LIMIT 10"""
 
@@ -25,8 +25,8 @@ LIMIT 10"""
 
 def query3_top_albums_by_global_playback():
     query = """
-SELECT album_name, artist_name, total_global_playbacks, tl.max_song AS max_song_name, tl.play_count AS max_song_plays, photo_link
-FROM (SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
+SELECT  album_name, artist_name, total_global_playbacks, tl.max_song AS max_song_name, tl.play_count AS max_song_plays, photo_link, artist_id
+FROM (SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name, artist.artist_id AS artist_id,
 SUM(playbacks.count) AS total_global_playbacks, album.photo AS photo_link, MAX(playbacks.count) AS max_plays
 		FROM track, album, artist, album_artist, playbacks
 		WHERE track.track_id = playbacks.track_id
@@ -34,7 +34,7 @@ SUM(playbacks.count) AS total_global_playbacks, album.photo AS photo_link, MAX(p
 		AND track.album_id = album_artist.album_id
 		AND artist.artist_id = album_artist.artist_id
 		AND playbacks.country_code = "global"  #change to global
-		GROUP BY track.album_id, album.name, artist.name
+		GROUP BY track.album_id, album.name, artist.name, artist.artist_id
 		ORDER BY SUM(playbacks.count) DESC
 		LIMIT 10
 		) AS top_albums
@@ -51,7 +51,7 @@ SELECT artist_playbacks.artist_name AS artist_name,
 artist_playbacks.average_artist_playback AS average_artist_playback,
 artist_playbacks.sum_artist_playbacks AS sum_artist_playbacks,
 artist_songs.max_song AS most_played_song, artist_songs.play_count AS most_played_sound_count,
-artist_playbacks.photo
+artist_playbacks.photo, artist_playbacks.artist_id
 FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS photo, ROUND(AVG(p.count)) AS average_artist_playback,
 		SUM(p.count) sum_artist_playbacks, MAX(p.count) AS max_artist_playbacks
 		FROM artist ar, track t, album_artist alar, playbacks p
@@ -95,7 +95,7 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 track.track_number AS track_number, album.release_year AS release_year, playbacks.count AS total_plays
+		 track.track_number AS track_number, album.release_year AS release_year, playbacks.count AS total_plays, artist.artist_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
 ((album INNER JOIN album_artist ON album.album_id = album_artist.album_id)
@@ -111,7 +111,7 @@ LIMIT 10""".format(year1, year2)
 
 def query7_top_song_from_top_artist_in_genre(genre):
     query = """
-SELECT top_track_name, top_track_plays, artist_name, top_track_album, total_artist_plays_in_genre
+SELECT top_track_name, top_track_plays, artist_name, top_track_album, total_artist_plays_in_genre, artist_id
 FROM
 	(#top 10 artists in genre:
 	SELECT ar.artist_id as artist_id, ar.name AS artist_name,
@@ -148,7 +148,7 @@ def query_track(track_id):
     query = """
 SELECT track.name AS track_name ,artist.name AS artist_name,
  album.name AS album_name, album.release_year AS album_release_year, 
-  album.genre AS album_genre, album.photo AS album_photo_url, artist.photo AS artist_photo_url
+  album.genre AS album_genre, album.photo AS album_photo_url, artist.photo AS artist_photo_url, artist.artist_id
 FROM track, album, album_artist, artist
 WHERE track.track_id={0} AND track.album_id=album.album_id AND album.album_id=album_artist.album_id 
 AND album_artist.artist_id= artist.artist_id""".format(track_id)
@@ -156,7 +156,7 @@ AND album_artist.artist_id= artist.artist_id""".format(track_id)
 
 
 def query_artist(artist_id):
-    query = """SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,playbacks.count AS num_played, artist.photo AS artist_photo_url
+    query = """SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,playbacks.count AS num_played, artist.photo AS artist_photo_url, artist.artist_id
 FROM artist, album_artist, album, track, playbacks
 WHERE artist.artist_id={0} AND artist.artist_id= album_artist.artist_id 
 AND album_artist.album_id = album.album_id AND track.album_id=album.album_id 
@@ -167,7 +167,7 @@ LIMIT 3""".format(artist_id)
 
 
 def query_artist_discography (artist_id):
-    query="""SELECT album.name, album.release_year
+    query="""SELECT album.name, album.release_year, album.album_id
 FROM artist, album_artist, album
 WHERE artist.artist_id={0} AND artist.artist_id= album_artist.artist_id 
 AND album_artist.album_id = album.album_id""".format(artist_id)
@@ -176,17 +176,31 @@ AND album_artist.album_id = album.album_id""".format(artist_id)
 
 def query_album (album_id):
     query="""SELECT album.name AS album_name, artist.name AS artist_name, 
-    album.release_year AS album_release_year, album.genre AS album_genre, album.photo AS album_photo_url
+    album.release_year AS album_release_year, album.genre AS album_genre, album.photo AS album_photo_url, artist.artist_id, album.album_id
 FROM album, album_artist, artist
 WHERE album.album_id={0} AND album.album_id= album_artist.album_id AND 
 album_artist.artist_id=artist.artist_id""".format(album_id)
     return query
 
 def query_album_tracks(album_id):
-    query="""SELECT track.track_number, track.name
-FROM track, album 
-WHERE album.album_id={0} AND album.album_id=track.album_id 
-ORDER BY track.track_number""".format(album_id)
+    query = """SELECT track.track_number, track.name
+                FROM track, album 
+                WHERE album.album_id={0} AND album.album_id=track.album_id 
+                ORDER BY track.track_number""".format(album_id)
     return query
 
 #print(query_track(2412))
+
+def query_french_music():
+    query = '''
+    SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, a.artist_id
+    FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
+    WHERE t.track_id = p.track_id AND
+            t.album_id = al.album_id AND
+            al.album_id = ala.album_id AND
+            ala.artist_id = a.artist_id AND
+            p.country_code = "fr"
+    ORDER BY p.count DESC
+    LIMIT 10
+    '''
+    return query
