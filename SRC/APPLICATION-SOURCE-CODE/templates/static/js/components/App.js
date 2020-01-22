@@ -56,7 +56,7 @@ export default function App() {
   return (
     <Container maxWidth="lg" align="center">
       <Box my={4}>
-        <Typography variant="h2" component="h1" gutterBottom>
+        <Typography color="primary" variant="h1" component="h1" gutterBottom>
           <b>HaMeaser</b>
         </Typography>
         {section}
