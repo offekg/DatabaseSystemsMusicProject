@@ -1,3 +1,10 @@
+def query1_full_text_artist_bio_search(search_for,year1,year2):
+    query = """
+    
+    """
+    return query
+
+
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(" ")
 
@@ -220,3 +227,38 @@ WHERE t.track_id = p.track_id AND
 ORDER BY p.count DESC
 LIMIT 10"""
     return query
+
+
+def query_pop_music():
+    query = """
+SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
+FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
+WHERE t.track_id = p.track_id
+      AND t.album_id = al.album_id
+      AND al.album_id = ala.album_id
+      AND ala.artist_id = a.artist_id
+      AND p.country_code = "global"
+      AND al.genre = "pop"
+ORDER BY p.count DESC
+LIMIT 10"""
+    return query
+
+
+def query_japanese():
+    query = """
+SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
+FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
+WHERE t.track_id = p.track_id
+      AND t.album_id = al.album_id
+      AND al.album_id = ala.album_id
+      AND ala.artist_id = a.artist_id
+      AND p.country_code = "jp"
+      AND al.genre = "Asian"
+ORDER BY p.count DESC
+LIMIT 10"""
+    return query
+
+
+
+
+
