@@ -84,10 +84,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
-    backgroundColor: (255, 255, 255, 0.4)
+    background:
+      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   },
   paper: {
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     maxWidth: "60%"
@@ -1223,7 +1224,7 @@ function UpdatePlaylistHeaders(queryNum) {
       },
       {
         id: "arg5",
-        label: "Artist Image",
+        label: "Total Song Plays",
         minWidth: 100,
         align: "center"
         // format: value => value.toFixed(2)

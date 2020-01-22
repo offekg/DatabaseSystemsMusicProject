@@ -6,11 +6,20 @@ from templates.main.queries import *
 query_num_to_query_string = {
     '1': None,
     '2': query2_top_playbacks_per_countries('us'),
-    '3': query3_top_albums_by_global_playback(),
+    '3': None,
     '4': query4_top_artists_by_avg_global_playbacks(),
     '5': query5_longest_albums(),
     '6': query6_most_played_between_year1_year2(1900, 2100),
     '7': query7_top_song_from_top_artist_in_genre('pop'),
+    '11': query3_top_albums_by_global_playback(),
+    '12': None,
+    '13': None,
+    '14': None,
+    '15': None,
+    '16': None,
+    '17': None,
+    '18': None,
+    '19': None
 }
 
 def record_to_json(record):
