@@ -3,6 +3,7 @@ import React from "react";
 import Fab from "@material-ui/core/Fab";
 import Box from "@material-ui/core/Box";
 import Zoom from "@material-ui/core/Zoom";
+import Chip from "@material-ui/core/Chip";
 import Link from "@material-ui/core/Link";
 import Fade from "@material-ui/core/Fade";
 import Input from "@material-ui/core/Input";
@@ -10,19 +11,19 @@ import Table from "@material-ui/core/Table";
 import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 import Rating from "@material-ui/lab/Rating";
+import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
-import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 import { blue } from "@material-ui/core/colors";
 import Backdrop from "@material-ui/core/Backdrop";
 import TableRow from "@material-ui/core/TableRow";
+import MenuItem from "@material-ui/core/MenuItem";
 import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -31,7 +32,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import TableContainer from "@material-ui/core/TableContainer";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import CommonVars from "./CommonVars";
@@ -50,6 +51,18 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(3),
       width: "70%"
     }
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: "70%",
+    maxWidth: "70%"
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  chip: {
+    margin: 2
   },
   container: {
     position: "relative",
@@ -94,7 +107,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: "60%"
   },
   regularCell: {
-    color: "white"
+    color: "black"
   }
 }));
 
@@ -110,19 +123,6 @@ const labels = {
   4.5: "Excellent",
   5: "Excellent+"
 };
-
-const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
-  { title: "The Godfather", year: 1972 },
-  { title: "The Godfather: Part II", year: 1974 },
-  { title: "The Dark Knight", year: 2008 },
-  { title: "12 Angry Men", year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: "Pulp Fiction", year: 1994 },
-  { title: "The Lord of the Rings: The Return of the King", year: 2003 },
-  { title: "The Good, the Bad and the Ugly", year: 1966 },
-  { title: "Fight Club", year: 1999 }
-];
 
 function createData(arg1, arg2, arg3, arg4, arg5, link_id) {
   return { arg1, arg2, arg3, arg4, arg5, link_id };
@@ -322,28 +322,20 @@ export default function MainSection() {
 
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-  const timer = React.useRef();
 
   const [sendShown, setSendShown] = React.useState(<p />);
 
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
-
   const handleButtonClick = () => {
-    if (!loading) {
-      SetTableBody(<SkeletonLoad />);
-      setSuccess(false);
-      setLoading(true);
-      UpdatePlaylistData(document.getElementById("queryNum").value);
-      timer.current = setTimeout(() => {
-        setSuccess(true);
-        setLoading(false);
-        SetTableBody(<PlaylistManager />);
-      }, 5000);
-    }
+    SetTableBody(<SkeletonLoad />);
+    setSuccess(false);
+    setLoading(true);
+    UpdatePlaylistData(document.getElementById("queryNum").value, showPlaylist);
+  };
+
+  const showPlaylist = () => {
+    setSuccess(true);
+    setLoading(false);
+    SetTableBody(<PlaylistManager />);
   };
 
   const queryNumToArgs = {
@@ -413,9 +405,13 @@ export default function MainSection() {
   );
 }
 
-function UpdatePlaylistData(selected) {
+async function UpdatePlaylistData(selected, _callback) {
   const Http = new XMLHttpRequest();
-  const url = "./query?queryNum=" + selected;
+  let getData = new Promise((resolve, reject) => {
+    const url = buildUrl(parseInt(selected, 10));
+    resolve(url);
+  });
+  let url = await getData;
   Http.open("GET", url);
   Http.setRequestHeader("Content-Type", "application/json");
   Http.onreadystatechange = e => {
@@ -439,10 +435,42 @@ function UpdatePlaylistData(selected) {
       }
 
       console.log(rows);
+      _callback();
     }
   };
 
   Http.send();
+}
+
+async function buildUrl(selected) {
+  console.log(selected);
+  console.log(typeof selected);
+  var url = "./query?queryNum=" + selected;
+  switch (selected) {
+    case 1:
+      return url;
+    case 2:
+      url += "&countries=" + document.getElementById("countrySelector").value;
+      return url;
+    case 3:
+      url +=
+        "&fromYear=" +
+        document.getElementById("fromYear").value +
+        "&toYear=" +
+        document.getElementById("toYear").value;
+      return url;
+    case 4:
+      url += "&genre=" + document.getElementById("genreSelector").value;
+      return url;
+    case 5:
+      return url;
+    case 6:
+      return url;
+    case 7:
+      return url;
+    default:
+      return url;
+  }
 }
 
 function UpdateModalData(queryType, id, _callback) {
@@ -501,92 +529,11 @@ function UpdatePlaylistHeaders(queryNum) {
 function QueryArgs1() {
   const classes = useStyles();
 
-  UpdatePlaylistHeaders(1);
-
-  return (
-    <form className={classes.root} noValidate autoComplete="off">
-      <input type="hidden" id="queryNum" name="queryNum" value="1" />
-      <div align="center">
-        <FormControlLabel
-          control={<Switch value="explicit" color="primary" />}
-          label="Include Explicit"
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          id="outlined-number"
-          label="Number"
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-search"
-          label="Search field"
-          type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={top100Films}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            With a start adornment
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-    </form>
-  );
-}
-
-function QueryArgs2() {
-  const classes = useStyles();
-
   UpdatePlaylistHeaders(2);
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
-      <input type="hidden" id="queryNum" name="queryNum" value="2" />
+      <input type="hidden" id="queryNum" name="queryNum" value="1" />
       <div>
         <FormControl fullWidth className={classes.margin}>
           <InputLabel htmlFor="input-with-icon-adornment">
@@ -628,7 +575,7 @@ function QueryArgs2() {
         <Autocomplete
           fullWidth
           id="combo-box-demo"
-          options={top100Films}
+          options={countries}
           getOptionLabel={option => option.title}
           renderInput={params => (
             <TextField
@@ -649,6 +596,56 @@ function QueryArgs2() {
           defaultValue="Hello World"
           variant="outlined"
         />
+      </div>
+    </form>
+  );
+}
+
+function QueryArgs2() {
+  const classes = useStyles();
+
+  UpdatePlaylistHeaders(1);
+
+  const theme = useTheme();
+  const [countryName, setCountryName] = React.useState([]);
+
+  const handleChange = e => {
+    setCountryName(e.target.value);
+  };
+
+  return (
+    <form className={classes.root} noValidate autoComplete="off">
+      <input type="hidden" id="queryNum" name="queryNum" value="2" />
+      <div>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="demo-mutiple-chip-label">Select Countries</InputLabel>
+          <Select
+            labelId="demo-mutiple-chip-label"
+            id="countries"
+            multiple
+            value={countryName}
+            onChange={handleChange}
+            input={<Input id="countrySelector" />}
+            renderValue={selected => (
+              <div className={classes.chips}>
+                {selected.map(value => (
+                  <Chip key={value} label={value} className={classes.chip} />
+                ))}
+              </div>
+            )}
+            MenuProps={MenuProps}
+          >
+            {countries.map(name => (
+              <MenuItem
+                key={name}
+                value={name}
+                style={getStyles(name, countryName, theme)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
     </form>
   );
@@ -663,25 +660,10 @@ function QueryArgs3() {
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="3" />
       <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-      <div>
         <TextField
           fullWidth
-          id="outlined-number"
-          label="Number"
+          id="fromYear"
+          label="From Year"
           type="number"
           InputLabelProps={{
             shrink: true
@@ -692,36 +674,12 @@ function QueryArgs3() {
       <div>
         <TextField
           fullWidth
-          required
-          id="outlined-search"
-          label="Search field"
-          type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={top100Films}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
+          id="toYear"
+          label="To Year"
+          type="number"
+          InputLabelProps={{
+            shrink: true
+          }}
           variant="outlined"
         />
       </div>
@@ -738,66 +696,19 @@ function QueryArgs4() {
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="4" />
       <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          id="outlined-number"
-          label="Number"
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-search"
-          label="Search field"
-          type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
         <Autocomplete
           fullWidth
-          id="combo-box-demo"
-          options={top100Films}
-          getOptionLabel={option => option.title}
+          id="genreSelector"
+          options={genres}
+          getOptionLabel={option => option}
           renderInput={params => (
             <TextField
               {...params}
-              label="Combo box"
+              label="Choose a Genre"
               variant="outlined"
               fullWidth
             />
           )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
-          variant="outlined"
         />
       </div>
     </form>
@@ -853,7 +764,7 @@ function QueryArgs5() {
         <Autocomplete
           fullWidth
           id="combo-box-demo"
-          options={top100Films}
+          options={countries}
           getOptionLabel={option => option.title}
           renderInput={params => (
             <TextField
@@ -928,7 +839,7 @@ function QueryArgs6() {
         <Autocomplete
           fullWidth
           id="combo-box-demo"
-          options={top100Films}
+          options={countries}
           getOptionLabel={option => option.title}
           renderInput={params => (
             <TextField
@@ -1003,7 +914,7 @@ function QueryArgs7() {
         <Autocomplete
           fullWidth
           id="combo-box-demo"
-          options={top100Films}
+          options={countries}
           getOptionLabel={option => option.title}
           renderInput={params => (
             <TextField
@@ -1028,3 +939,146 @@ function QueryArgs7() {
     </form>
   );
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+function getStyles(name, countryName, theme) {
+  return {
+    fontWeight:
+      countryName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium
+  };
+}
+
+const countries = [
+  "Argentina",
+  "Andorra",
+  "Australia",
+  "Austria",
+  "Belgium",
+  "Bolivia",
+  "Brazil",
+  "Bulgaria",
+  "Canada",
+  "Chile",
+  "Colombia",
+  "Costa_Rica",
+  "Cyprus",
+  "Czech_Republic",
+  "Denmark",
+  "Dominican_Republic",
+  "Ecuador",
+  "El_Salvador",
+  "Estonia",
+  "Finland",
+  "France",
+  "Germany",
+  "bal;Global",
+  "Greece",
+  "Guatemala",
+  "Honduras",
+  "Hong_Kong",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Japan",
+  "Latvia",
+  "Lithuania",
+  "Luxembourg",
+  "Malaysia",
+  "Malta",
+  "Mexico",
+  "Netherlands",
+  "New_Zealand",
+  "Nicaragua",
+  "Norway",
+  "Panama",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Romania",
+  "Singapore",
+  "Slovakia",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "Taiwan",
+  "Thailand",
+  "Turkey",
+  "United_Kingdom",
+  "United_States",
+  "Uruguay",
+  "Vietnam"
+];
+
+const genres = [
+  "Acoustic",
+  "Alternative Hip-Hop",
+  "Alternative Metal",
+  "Alternative Rock",
+  "Asian",
+  "BlueGrass",
+  "Blues",
+  "Christmas",
+  "Classic Rock",
+  "Country",
+  "Country Pop",
+  "Dance",
+  "Dancehall",
+  "Deep House",
+  "Disco",
+  "Downtempo",
+  "Drum & Bass",
+  "Dubstep",
+  "Electro House",
+  "Electronic",
+  "Experimental",
+  "Folk",
+  "Funk",
+  "Grime",
+  "Hard Rock",
+  "Heavy Metal",
+  "Hip-Hop",
+  "House",
+  "Indie",
+  "Indie Pop",
+  "Indie Rock",
+  "K-Pop",
+  "Latin",
+  "Metal",
+  "Musical",
+  "New Wave",
+  "OST",
+  "Pop",
+  "Pop-Punk",
+  "Pop-Rock",
+  "Progressive Rock",
+  "Psychedelic Rock",
+  "R&B",
+  "Rap",
+  "Reggae fusion",
+  "Rock",
+  "Rock & Roll",
+  "Singer Songwriter",
+  "Soul",
+  "Swing",
+  "Synthpop",
+  "Techno",
+  "Trance",
+  "Trap"
+];
