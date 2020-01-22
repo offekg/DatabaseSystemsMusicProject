@@ -151,7 +151,7 @@ SELECT track.name AS track_name ,artist.name AS artist_name,
  album.name AS album_name, album.release_year AS album_release_year,
   album.genre AS album_genre, album.photo AS album_photo_url, artist.photo AS artist_photo_url, artist.artist_id
 FROM track, album, album_artist, artist
-WHERE track.track_id={0} AND track.album_id=album.album_id AND album.album_id=album_artist.album_id
+WHERE track.track_id=\"{0}\" AND track.album_id=album.album_id AND album.album_id=album_artist.album_id
 AND album_artist.artist_id= artist.artist_id""".format(track_id)
     return query
 
@@ -159,7 +159,7 @@ AND album_artist.artist_id= artist.artist_id""".format(track_id)
 def query_artist(artist_id):
     query = """SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,playbacks.count AS num_played, artist.photo AS artist_photo_url, artist.artist_id
 FROM artist, album_artist, album, track, playbacks
-WHERE artist.artist_id={0} AND artist.artist_id= album_artist.artist_id
+WHERE artist.artist_id=\"{0}\" AND artist.artist_id= album_artist.artist_id
 AND album_artist.album_id = album.album_id AND track.album_id=album.album_id
 AND playbacks.country_code="global" AND track.track_id=playbacks.track_id
 ORDER BY playbacks.count DESC
@@ -170,7 +170,7 @@ LIMIT 3""".format(artist_id)
 def query_artist_discography (artist_id):
     query="""SELECT album.name, album.release_year, album.album_id
 FROM artist, album_artist, album
-WHERE artist.artist_id={0} AND artist.artist_id= album_artist.artist_id
+WHERE artist.artist_id=\"{0}\" AND artist.artist_id= album_artist.artist_id
 AND album_artist.album_id = album.album_id""".format(artist_id)
     return query
 
@@ -179,14 +179,14 @@ def query_album (album_id):
     query="""SELECT album.name AS album_name, artist.name AS artist_name,
     album.release_year AS album_release_year, album.genre AS album_genre, album.photo AS album_photo_url, artist.artist_id, album.album_id
 FROM album, album_artist, artist
-WHERE album.album_id={0} AND album.album_id= album_artist.album_id AND
+WHERE album.album_id=\"{0}\" AND album.album_id= album_artist.album_id AND
 album_artist.artist_id=artist.artist_id""".format(album_id)
     return query
 
 def query_album_tracks(album_id):
     query = """SELECT track.track_number, track.name
                 FROM track, album
-                WHERE album.album_id={0} AND album.album_id=track.album_id
+                WHERE album.album_id=\"{0}\" AND album.album_id=track.album_id
                 ORDER BY track.track_number""".format(album_id)
     return queryss
 

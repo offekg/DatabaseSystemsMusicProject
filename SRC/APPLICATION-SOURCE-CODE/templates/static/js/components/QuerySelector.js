@@ -13,7 +13,7 @@ import Rating from "@material-ui/lab/Rating";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
-import { green } from "@material-ui/core/colors";
+import { blue } from "@material-ui/core/colors";
 import Backdrop from "@material-ui/core/Backdrop";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
@@ -65,14 +65,14 @@ const useStyles = makeStyles(theme => ({
     position: "relative"
   },
   fabProgress: {
-    color: green[500],
+    color: blue[500],
     position: "absolute",
     top: -6,
     left: -6,
     zIndex: 1
   },
   buttonProgress: {
-    color: green[500],
+    color: blue[500],
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -88,10 +88,13 @@ const useStyles = makeStyles(theme => ({
       "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   },
   paper: {
-    // backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     maxWidth: "60%"
+  },
+  regularCell: {
+    color: "white"
   }
 }));
 
@@ -121,12 +124,13 @@ const top100Films = [
   { title: "Fight Club", year: 1999 }
 ];
 
-function createData(arg1, arg2, arg3, arg4, arg5) {
-  return { arg1, arg2, arg3, arg4, arg5 };
+function createData(arg1, arg2, arg3, arg4, arg5, link_id) {
+  return { arg1, arg2, arg3, arg4, arg5, link_id };
 }
 
 var columns = [];
 var rows = [];
+var modalData = [];
 
 function IconContainer(props) {
   const { value, ...other } = props;
@@ -165,8 +169,8 @@ function PlaylistManager() {
 
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = index => {
+    UpdateModalData("song", index, setOpen);
   };
 
   const handleClose = () => {
@@ -215,7 +219,11 @@ function PlaylistManager() {
                           <TableCell key={column.id} align={column.align}>
                             {column.id === "arg1" ? (
                               <div>
-                                <Link onClick={handleClickOpen}>{value}</Link>
+                                <Link
+                                  onClick={() => handleClickOpen(row.link_id)}
+                                >
+                                  {value}
+                                </Link>
                                 <Modal
                                   aria-labelledby="additional-info"
                                   aria-describedby="additional-info"
@@ -234,7 +242,7 @@ function PlaylistManager() {
                                         <tr>
                                           <td height="10%">
                                             <h2 id="modal-title">
-                                              Artist: Ed Sheeran
+                                              {modalData[0]}
                                             </h2>
                                           </td>
                                           <td rowspan="2">
@@ -245,15 +253,13 @@ function PlaylistManager() {
                                                 overflow: "hidden",
                                                 borderBottomLeftRadius: "50%",
                                                 borderTopLeftRadius: "50%"
-                                                // borderBottomRightRadius: "15%",
-                                                // borderTopRightRadius: "15%"
                                               }}
                                             >
                                               <img
                                                 width="200px"
                                                 height="250px"
                                                 alt="stam"
-                                                src="https://upload.wikimedia.org/wikipedia/commons/5/55/Ed_Sheeran_2013.jpg"
+                                                src={modalData[2]}
                                               />
                                             </Paper>
                                           </td>
@@ -261,33 +267,7 @@ function PlaylistManager() {
                                         <tr>
                                           <td>
                                             <h4 id="modal-description">
-                                              Biography: Edward Christopher "Ed"
-                                              Sheeran (born 17 February 1991) is
-                                              an English singer-songwriter and
-                                              musician. He was born in Hebden
-                                              Bridge in Yorkshire and raised in
-                                              Framlingham, Suffolk. He dropped
-                                              out of school at 16, and moved to
-                                              London the following year, in
-                                              2008, to pursue a career in music.
-                                              In early 2011, Sheeran
-                                              independently released the
-                                              extended play, No. 5
-                                              Collaborations Project, which
-                                              caught the attention of Elton John
-                                              and Jamie Foxx. After signing with
-                                              Asylum Records, his debut album, +
-                                              (read as "plus"), was released on
-                                              9 September 2011 and has since
-                                              been certified six-times platinum
-                                              in the UK. The album contains the
-                                              single, "The A Team", which earned
-                                              him the Ivor Novello Award for
-                                              Best Song Musically and Lyrically.
-                                              In 2012, Sheeran won the Brit
-                                              Awards for Best British Male Solo
-                                              Artist and British Breakthrough
-                                              Act….
+                                              {modalData[1]}
                                             </h4>
                                           </td>
                                         </tr>
@@ -297,7 +277,9 @@ function PlaylistManager() {
                                 </Modal>
                               </div>
                             ) : (
-                              value
+                              <span className={classes.regularCell}>
+                                {value}
+                              </span>
                             )}
                           </TableCell>
                         );
@@ -329,6 +311,191 @@ function PlaylistManager() {
       </div>
     </div>
   );
+}
+
+export default function MainSection() {
+  const classes = useStyles();
+  const [selected, setSelected] = React.useState(0);
+  const [args, setArgs] = React.useState(<CommonVars />);
+
+  const [tableBody, SetTableBody] = React.useState(<SkeletonLoad />);
+
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const timer = React.useRef();
+
+  const [sendShown, setSendShown] = React.useState(<p />);
+
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(timer.current);
+    };
+  }, []);
+
+  const handleButtonClick = () => {
+    if (!loading) {
+      SetTableBody(<SkeletonLoad />);
+      setSuccess(false);
+      setLoading(true);
+      UpdatePlaylistData(document.getElementById("queryNum").value);
+      timer.current = setTimeout(() => {
+        setSuccess(true);
+        setLoading(false);
+        SetTableBody(<PlaylistManager />);
+      }, 5000);
+    }
+  };
+
+  const queryNumToArgs = {
+    1: <QueryArgs1 />,
+    2: <QueryArgs2 />,
+    3: <QueryArgs3 />,
+    4: <QueryArgs4 />,
+    5: <QueryArgs5 />,
+    6: <QueryArgs6 />,
+    7: <QueryArgs7 />
+  };
+
+  const queryButtons = [];
+  for (let i = 1; i < 8; i++) {
+    queryButtons.push(
+      <Button
+        startIcon={selected !== i ? <ChevronRightIcon /> : <ExpandMoreIcon />}
+        variant={selected !== i ? "outlined" : "contained"}
+        size="large"
+        color="primary"
+        onClick={() => {
+          if (selected === i) {
+            setSelected(0);
+            setArgs(<CommonVars />);
+            setSendShown(<p />);
+          } else {
+            setSelected(i);
+            setArgs(queryNumToArgs[i]);
+            setSendShown(
+              <SendButton
+                success={success}
+                handleButtonClick={handleButtonClick}
+              />
+            );
+          }
+        }}
+      >
+        Query #{i}
+      </Button>
+    );
+  }
+
+  return (
+    <div className={classes.root}>
+      {queryButtons}
+      <table width="100%">
+        <tbody>
+          <tr>
+            <td width="40%">{args}</td>
+            <td rowspan="2" width="60%">
+              {tableBody}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div className={classes.wrapper}>
+                {sendShown}
+                {loading && (
+                  <CircularProgress size={68} className={classes.fabProgress} />
+                )}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function UpdatePlaylistData(selected) {
+  const Http = new XMLHttpRequest();
+  const url = "./query?queryNum=" + selected;
+  Http.open("GET", url);
+  Http.setRequestHeader("Content-Type", "application/json");
+  Http.onreadystatechange = e => {
+    rows = [];
+
+    if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
+      var data = JSON.parse(Http.response);
+
+      for (var index = 0; index < data.length; index++) {
+        var current = data[index];
+        rows.push(
+          createData(
+            current[0],
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[current.length - 1]
+          )
+        );
+      }
+
+      console.log(rows);
+    }
+  };
+
+  Http.send();
+}
+
+function UpdateModalData(queryType, id, _callback) {
+  const Http = new XMLHttpRequest();
+  const url = "./modal?queryType=" + queryType + "&id=" + id;
+  Http.open("GET", url);
+  Http.setRequestHeader("Content-Type", "application/json");
+  Http.onreadystatechange = e => {
+    if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
+      var data = JSON.parse(Http.response);
+
+      modalData = [data["name"], data["body"], data["image"]];
+
+      _callback(true);
+      console.log(data);
+    }
+  };
+
+  Http.send();
+}
+
+const queryHeaders = {
+  1: ["Times Played", "Name", "Artist", "Length", "Album"],
+  2: ["Times Played", "Name", "Artist", "Length", "Album"],
+  3: ["Name", "Artist", "Times Played", "Most Played Song", "Total Song Plays"],
+  4: [
+    "Name",
+    "Average Times Played",
+    "Total Times Played",
+    "Most Played Song",
+    "Total Song Plays"
+  ],
+  5: ["Name", "Artist", "Album Length", "Longest Song", "Album Cover"],
+  6: ["Name", "Artist", "Album", "Total Times Played", "Release year"],
+  7: [
+    "Name",
+    "Total Times Played",
+    "Artist",
+    "Album",
+    "Total Plays of Artist in Genre"
+  ]
+};
+
+function UpdatePlaylistHeaders(queryNum) {
+  columns = [];
+  for (let i = 1; i <= queryHeaders[queryNum].length; i++) {
+    columns.push({
+      id: "arg" + i,
+      label: queryHeaders[queryNum][i - 1],
+      align: "center",
+      minWidth: 100
+    });
+  }
 }
 
 function QueryArgs1() {
@@ -860,480 +1027,4 @@ function QueryArgs7() {
       </div>
     </form>
   );
-}
-
-export default function MainSection() {
-  const classes = useStyles();
-  const [selected, setSelected] = React.useState("0");
-  const [args, setArgs] = React.useState(<CommonVars />);
-
-  const [tableBody, SetTableBody] = React.useState(<SkeletonLoad />);
-
-  const [loading, setLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
-  const timer = React.useRef();
-
-  const [sendShown, setSendShown] = React.useState(<p />);
-
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
-
-  const handleButtonClick = () => {
-    if (!loading) {
-      SetTableBody(<SkeletonLoad />);
-      setSuccess(false);
-      setLoading(true);
-      UpdatePlaylistData(document.getElementById("queryNum").value);
-      timer.current = setTimeout(() => {
-        setSuccess(true);
-        setLoading(false);
-        SetTableBody(<PlaylistManager />);
-      }, 5000);
-    }
-  };
-
-  return (
-    <div className={classes.root}>
-      <Button
-        startIcon={selected !== "1" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "1" ? "outlined" : "contained"}
-        value="1"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "1") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("1");
-            setArgs(<QueryArgs1 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #1
-      </Button>
-      <Button
-        startIcon={selected !== "2" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "2" ? "outlined" : "contained"}
-        value="2"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "2") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("2");
-            setArgs(<QueryArgs2 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #2
-      </Button>
-      <Button
-        startIcon={selected !== "3" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "3" ? "outlined" : "contained"}
-        value="3"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "3") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("3");
-            setArgs(<QueryArgs3 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #3
-      </Button>
-      <Button
-        startIcon={selected !== "4" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "4" ? "outlined" : "contained"}
-        value="4"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "4") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("4");
-            setArgs(<QueryArgs4 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #4
-      </Button>
-      <Button
-        startIcon={selected !== "5" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "5" ? "outlined" : "contained"}
-        value="5"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "5") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("5");
-            setArgs(<QueryArgs5 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #5
-      </Button>
-      <Button
-        startIcon={selected !== "6" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "6" ? "outlined" : "contained"}
-        value="6"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "6") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("6");
-            setArgs(<QueryArgs6 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #6
-      </Button>
-      <Button
-        startIcon={selected !== "7" ? <ChevronRightIcon /> : <ExpandMoreIcon />}
-        variant={selected !== "7" ? "outlined" : "contained"}
-        value="7"
-        size="large"
-        color="primary"
-        onClick={() => {
-          if (selected === "7") {
-            setArgs(<CommonVars />);
-            setSelected("0");
-            setSendShown(<p />);
-          } else {
-            setSelected("7");
-            setArgs(<QueryArgs7 />);
-            setSendShown(
-              <SendButton
-                success={success}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          }
-        }}
-      >
-        Query #7
-      </Button>
-      <table width="100%">
-        <tbody>
-          <tr>
-            <td width="40%">{args}</td>
-            <td rowspan="2" width="60%">
-              {tableBody}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className={classes.wrapper}>
-                {sendShown}
-                {loading && (
-                  <CircularProgress size={68} className={classes.fabProgress} />
-                )}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function UpdatePlaylistData(selected) {
-  //var some_data = document.getElementById("input-with-icon-adornment").value;
-
-  const Http = new XMLHttpRequest();
-  const url = "./timor?queryNum=" + selected;
-  Http.open("GET", url);
-  Http.setRequestHeader("Content-Type", "application/json");
-  Http.send();
-
-  Http.onreadystatechange = e => {
-    rows = [];
-
-    var data = JSON.parse(Http.response);
-
-    for (var index = 0; index < data.length; index++) {
-      var current = data[index];
-      if (current.length === 4)
-        rows.push(createData(current[0], current[1], current[2], current[3]));
-      else
-        rows.push(
-          createData(current[0], current[1], current[2], current[3], current[4])
-        );
-    }
-
-    console.log(rows);
-  };
-}
-
-function UpdatePlaylistHeaders(queryNum) {
-  if (queryNum === 1 || queryNum === 2) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Times Played",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Artist",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
-        label: "Length",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg5",
-        label: "Album",
-        minWidth: 100,
-        align: "center",
-        format: value => value.toFixed(2)
-      }
-    ];
-  } else if (queryNum === 3) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Artist",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Times Played",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
-        label: "Most Played Song",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg5",
-        label: "Total Song Plays",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toFixed(2)
-      }
-    ];
-  } else if (queryNum === 4) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Average Times Played",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Total Times Played",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg4",
-        label: "Most Played Song",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg5",
-        label: "Total Song Plays",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toFixed(2)
-      }
-    ];
-  } else if (queryNum === 5) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Artist",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Album Length",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
-        label: "Longest Song",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg5",
-        label: "Album Cover",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toFixed(2)
-      }
-    ];
-  } else if (queryNum === 6) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Artist",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Album",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
-        label: "Total Times Played",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg5",
-        label: "Release year",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      }
-    ];
-  } else if (queryNum === 7) {
-    columns = [
-      {
-        id: "arg1",
-        label: "Name",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg2",
-        label: "Total Times Played",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg3",
-        label: "Artists",
-        align: "center",
-        minWidth: 100
-      },
-      {
-        id: "arg4",
-        label: "Album",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      },
-      {
-        id: "arg5",
-        label: "Total Plays of Artist in Genre",
-        minWidth: 100,
-        align: "center"
-        // format: value => value.toLocaleString()
-      }
-    ];
-  }
 }
