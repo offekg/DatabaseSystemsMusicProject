@@ -5,15 +5,15 @@ from templates.main.queries import *
 
 query_num_to_query_string = {
     '1': None,
-    '2': query2_top_playbacks_per_countries('us'),
-    '3': query6_most_played_between_year1_year2(1900, 2100),
-    '4': query7_top_song_from_top_artist_in_genre('pop'),
+    '2': query2_top_playbacks_per_countries,
+    '3': query6_most_played_between_year1_year2,
+    '4': query7_top_song_from_top_artist_in_genre,
     '5': None,
     '6': None,
     '7': None,
-    '11': query3_top_albums_by_global_playback(),
-    '12': query4_top_artists_by_avg_global_playbacks(),
-    '13': query5_longest_albums(),
+    '11': query3_top_albums_by_global_playback,
+    '12': query4_top_artists_by_avg_global_playbacks,
+    '13': query5_longest_albums,
     '14': None,
     '15': None,
     '16': None,
@@ -37,7 +37,7 @@ def record_to_json(record):
 
     return json.dumps(json_response)
 
-def regular_query(query_num):
+def regular_query(query_num, *args):
     try:
         connection = mysql.connector.connect(host='mysqlsrv1.cs.tau.ac.il',
                                              port='3306',
@@ -48,7 +48,7 @@ def regular_query(query_num):
             cursor = connection.cursor()
             cursor.execute("select database();")
             record = cursor.fetchone()
-            cursor.execute(query_num_to_query_string.get(query_num))
+            cursor.execute(query_num_to_query_string.get(query_num)(*args))
             record = cursor.fetchall()
             return record
 
@@ -85,7 +85,7 @@ def query_for_me(query_type, query_data):
             connection.close()
 
 def additional_info_song(id):
-    record = query_for_me('song', id)
+    record = query_for_me('song', id)[0]
     print('record ' + str(record))
 
     response = {'name': record[0]}
@@ -101,7 +101,7 @@ def additional_info_song(id):
     return response
 
 def additional_info_artist(id):
-    bio = query_for_me('artist1', id)
+    bio = query_for_me('artist1', id)[0]
     discs = query_for_me('artist2', id)
 
     response = {'name': bio[0]}
@@ -118,7 +118,7 @@ def additional_info_artist(id):
     return response
 
 def additional_info_album(id):
-    info = query_for_me('album1', id)
+    info = query_for_me('album1', id)[0]
     songs = query_for_me('album2', id)
 
     response = {'name': info[0]}

@@ -104,7 +104,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
-    maxWidth: "60%"
+    minWidth: "40%",
+    maxWidth: "70%"
   },
   regularCell: {
     color: "black"
@@ -169,8 +170,16 @@ function PlaylistManager() {
 
   const [open, setOpen] = React.useState(false);
 
+  const queryNum = parseInt(document.getElementById("queryNum").value, 10);
   const handleClickOpen = index => {
-    UpdateModalData("song", index, setOpen);
+    switch (queryNum) {
+      case 3:
+      case 4:
+        UpdateModalData("song", index, setOpen);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleClose = () => {
@@ -224,57 +233,6 @@ function PlaylistManager() {
                                 >
                                   {value}
                                 </Link>
-                                <Modal
-                                  aria-labelledby="additional-info"
-                                  aria-describedby="additional-info"
-                                  className={classes.modal}
-                                  open={open}
-                                  onClose={handleClose}
-                                  closeAfterTransition
-                                  BackdropComponent={Backdrop}
-                                  BackdropProps={{
-                                    timeout: 500
-                                  }}
-                                >
-                                  <Fade in={open}>
-                                    <div className={classes.paper}>
-                                      <table color="white">
-                                        <tr>
-                                          <td height="10%">
-                                            <h2 id="modal-title">
-                                              {modalData[0]}
-                                            </h2>
-                                          </td>
-                                          <td rowspan="2">
-                                            <Paper
-                                              zDepth={5}
-                                              circle={true}
-                                              style={{
-                                                overflow: "hidden",
-                                                borderBottomLeftRadius: "50%",
-                                                borderTopLeftRadius: "50%"
-                                              }}
-                                            >
-                                              <img
-                                                width="200px"
-                                                height="250px"
-                                                alt="stam"
-                                                src={modalData[2]}
-                                              />
-                                            </Paper>
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td>
-                                            <h4 id="modal-description">
-                                              {modalData[1]}
-                                            </h4>
-                                          </td>
-                                        </tr>
-                                      </table>
-                                    </div>
-                                  </Fade>
-                                </Modal>
                               </div>
                             ) : (
                               <span className={classes.regularCell}>
@@ -291,6 +249,55 @@ function PlaylistManager() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Modal
+          aria-labelledby="additional-info"
+          aria-describedby="additional-info"
+          className={classes.modal}
+          open={open}
+          onClose={handleClose}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500
+          }}
+        >
+          <Fade in={open}>
+            <div className={classes.paper}>
+              <table color="white">
+                <tr>
+                  <td height="10%">
+                    <h2 id="modal-title">{modalData[0]}</h2>
+                  </td>
+                  <td rowspan="2">
+                    <Paper
+                      zDepth={5}
+                      circle={true}
+                      style={{
+                        overflow: "hidden",
+                        borderBottomLeftRadius: "50%",
+                        borderTopLeftRadius: "50%"
+                      }}
+                    >
+                      <img
+                        width="200px"
+                        height="250px"
+                        alt="stam"
+                        src={modalData[2]}
+                      />
+                    </Paper>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h4 id="modal-description">
+                      <pre>{modalData[1]}</pre>
+                    </h4>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </Fade>
+        </Modal>
       </div>
 
       <div align="center">
@@ -407,34 +414,42 @@ export default function MainSection() {
 
 async function UpdatePlaylistData(selected, _callback) {
   const Http = new XMLHttpRequest();
+
   let getData = new Promise((resolve, reject) => {
     const url = buildUrl(parseInt(selected, 10));
     resolve(url);
   });
   let url = await getData;
-  Http.open("GET", url);
+
+  Http.open("GET", url, true);
   Http.setRequestHeader("Content-Type", "application/json");
   Http.onreadystatechange = e => {
     rows = [];
 
-    if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
-      var data = JSON.parse(Http.response);
+    if (Http.readyState === XMLHttpRequest.DONE) {
+      if (Http.status === 200) {
+        try {
+          var data = JSON.parse(Http.response);
 
-      for (var index = 0; index < data.length; index++) {
-        var current = data[index];
-        rows.push(
-          createData(
-            current[0],
-            current[1],
-            current[2],
-            current[3],
-            current[4],
-            current[current.length - 1]
-          )
-        );
+          for (var index = 0; index < data.length; index++) {
+            var current = data[index];
+            rows.push(
+              createData(
+                current[0],
+                current[1],
+                current[2],
+                current[3],
+                current[4],
+                current[current.length - 1]
+              )
+            );
+          }
+
+          console.log(rows);
+        } catch (err) {
+          console.log("Failed retrieving data");
+        }
       }
-
-      console.log(rows);
       _callback();
     }
   };
@@ -480,12 +495,16 @@ function UpdateModalData(queryType, id, _callback) {
   Http.setRequestHeader("Content-Type", "application/json");
   Http.onreadystatechange = e => {
     if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
-      var data = JSON.parse(Http.response);
+      try {
+        var data = JSON.parse(Http.response);
 
-      modalData = [data["name"], data["body"], data["image"]];
+        modalData = [data["name"], data["body"], data["image"]];
 
-      _callback(true);
-      console.log(data);
+        _callback(true);
+        console.log(data);
+      } catch (err) {
+        console.log("Failed retrieving data");
+      }
     }
   };
 
