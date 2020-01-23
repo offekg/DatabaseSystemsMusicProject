@@ -165,7 +165,7 @@ ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
 
 def query_track(track_id):
     query = """
-SELECT track.name AS track_name ,artist.name AS artist_name,
+SELECT track.name AS track_name ,artist.name AS artist_name, track.duration as duration,
 album.name AS album_name, album.release_year AS album_release_year,
 album.genre AS album_genre, album.photo AS album_photo_url, artist.photo AS artist_photo_url, artist.artist_id
 FROM track, album, album_artist, artist
@@ -252,7 +252,7 @@ LIMIT 10"""
     return query
 
 
-def query_country():
+def query_country_songs():
     query = """
 SELECT track.name AS track_name, track.duration, artist.name AS artist_name, album.name AS album_name, track.track_id
 FROM album JOIN track ON album.album_id = track.album_id
@@ -345,7 +345,8 @@ FROM album al, album_artist ala, artist ar
 WHERE ar.name LIKE "%{0}%"
 AND ar.artist_id = ala.artist_id
 AND ala.album_id = al.album_id
-ORDER BY ar.artist_id, al.release_year""".format(name)
+ORDER BY ar.artist_id, al.release_year
+LIMIT 10""".format(name)
     return query
 
 
