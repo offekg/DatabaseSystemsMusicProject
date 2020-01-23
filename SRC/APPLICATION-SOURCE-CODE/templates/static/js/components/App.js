@@ -1,14 +1,14 @@
 import React from "react";
-import HomePage from "./HomePage";
+import Fab from "@material-ui/core/Fab";
 import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
-import QuerySelector from "./QuerySelector";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-
-import Fab from "@material-ui/core/Fab";
 import { makeStyles } from "@material-ui/core/styles";
 import QueueMusicIcon from "@material-ui/icons/QueueMusic";
+
+import HomePage from "./HomePage";
+import QuerySelector from "./QuerySelector";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(1),
       minHeight: "60%",
       minWidth: "80%",
-      marginTop: theme.spacing(10)
+      marginBottom: theme.spacing(5)
     }
   },
   extendedIcon: {
@@ -59,7 +59,6 @@ export default function App() {
         <Typography color="primary" variant="h1" component="h1" gutterBottom>
           <b>המעשר</b>
         </Typography>
-        {section}
         <div className={classes.root}>
           <Fab
             size="large"
@@ -71,6 +70,7 @@ export default function App() {
             {buttonText}
           </Fab>
         </div>
+        {section}
         <Copyright />
       </Box>
     </Container>
