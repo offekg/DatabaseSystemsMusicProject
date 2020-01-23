@@ -217,7 +217,7 @@ ORDER BY track.track_number""".format(album_id)
 
 def query_french_music():
     query = """
-SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, a.artist_id
+SELECT DISTINCT t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
 FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
 WHERE t.track_id = p.track_id AND
         t.album_id = al.album_id AND
@@ -244,21 +244,87 @@ LIMIT 10"""
     return query
 
 
-def query_japanese():
+def query_country():
     query = """
-SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
-FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
-WHERE t.track_id = p.track_id
-      AND t.album_id = al.album_id
-      AND al.album_id = ala.album_id
-      AND ala.artist_id = a.artist_id
-      AND p.country_code = "jp"
-      AND al.genre = "Asian"
-ORDER BY p.count DESC
+SELECT track.name AS track_name, track.duration, artist.name AS artist_name, album.name AS album_name, track.track_id
+FROM album JOIN track ON album.album_id = track.album_id
+JOIN album_artist ON album.album_id = album_artist.album_id
+JOIN artist ON artist.artist_id = album_artist.artist_id
+WHERE album.genre = "Country"
+ORDER BY track.track_number
 LIMIT 10"""
     return query
 
 
+def query_christmas():
+    query = """
+SELECT track.name AS track_name, artist.name AS artist_name, track.duration AS duration,
+       album.release_year AS release_year, album.name AS album_name,track.track_id AS track_id
+FROM
+	(SELECT max(t.track_id) AS track_id, a.artist_id AS artist_id
+	FROM track AS t, album AS al, album_artist AS ala, artist AS a
+	WHERE t.album_id = al.album_id
+	      AND al.album_id = ala.album_id
+	      AND ala.artist_id = a.artist_id
+	      AND t.name LIKE "%christmas%"
+	GROUP BY a.artist_id, a.name
+	LIMIT 10) AS christmas_songs,
+	track, album, artist
+WHERE christmas_songs.track_id = track.track_id
+AND christmas_songs.artist_id = artist.artist_id
+AND album.album_id = track.album_id"""
+    return query
 
 
+def query_israel_top_2019():
+    query = """
+SELECT t.name AS track_name, p.count AS streams, ar.name AS artist_name, al.name AS album_name, t.track_id AS track_id
+FROM track t, playbacks p, album al, album_artist ala, artist ar
+WHERE p.country_code = "il"
+AND t.track_id = p.track_id
+AND al.album_id = t.album_id
+AND al.album_id = ala.album_id
+AND ala.artist_id = ar.artist_id
+AND al.release_year = 2019
 
+ORDER BY p.count desc"""
+    return query
+
+
+def query_old_love_songs():
+    query = """
+SELECT track.name AS track_name, artist.name AS artist_name, track.duration AS duration,
+       album.release_year AS release_year, album.name AS album_name,track.track_id AS track_id
+FROM
+	(SELECT max(t.track_id) AS track_id, a.artist_id AS artist_id
+	FROM track AS t, album AS al, album_artist AS ala, artist AS a
+	WHERE t.album_id = al.album_id
+	      AND al.album_id = ala.album_id
+	      AND ala.artist_id = a.artist_id
+	      AND (t.name LIKE "%love%")
+	      AND al.release_year < 1980
+	GROUP BY a.artist_id, a.name
+	LIMIT 10) AS christmas_songs,
+	track, album, artist
+WHERE christmas_songs.track_id = track.track_id
+AND christmas_songs.artist_id = artist.artist_id
+AND album.album_id = track.album_id"""
+    return query
+
+
+def query_sinatra_songs():
+    query = """
+SELECT track.name AS track_name, track.duration AS duration, al.name AS album_name, al.release_year AS release_year,
+track.track_id AS track_id
+FROM (
+	SELECT MIN(t.track_id) AS track_id, al.album_id AS album_id
+	FROM track t, album_artist ala, album al
+	WHERE t.album_id = ala.album_id
+	AND al.album_id = t.album_id
+	AND ala.artist_id = 755
+	GROUP BY al.album_id
+	LIMIT 10) AS sinatra_songs,
+track, album al
+WHERE track.track_id = sinatra_songs.track_id
+AND al.album_id = sinatra_songs.album_id"""
+    return query
