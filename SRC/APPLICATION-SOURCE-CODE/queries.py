@@ -295,8 +295,8 @@ AND al.album_id = t.album_id
 AND al.album_id = ala.album_id
 AND ala.artist_id = ar.artist_id
 AND al.release_year = 2019
-
-ORDER BY p.count desc"""
+ORDER BY p.count desc
+LIMIT 10"""
     return query
 
 
