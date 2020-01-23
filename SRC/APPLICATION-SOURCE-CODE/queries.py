@@ -355,11 +355,15 @@ LIMIT 10"""
 
 
 def query_songs_like_name(name):
+    full_name = name.split(",")
     query = """
 SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
 album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id
 FROM track, album, album_artist, artist
-WHERE MATCH(track.name) AGAINST ("{0}")
+WHERE MATCH(track.name) AGAINST ("{0}")"""
+    for i in range(1, len(full_name)):
+        query += "AND MATCH(track.name) AGAINST(\"{0}\")".format(full_name[1])
+    query += """
 AND track.album_id = album.album_id
 AND track.album_id = album_artist.album_id
 AND album_artist.artist_id = artist.artist_id
