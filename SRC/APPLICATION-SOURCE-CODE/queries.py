@@ -70,21 +70,22 @@ artist_songs.max_song AS most_played_song, artist_songs.play_count AS most_playe
 artist_playbacks.photo, artist_playbacks.artist_id
 FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS photo, ROUND(AVG(p.count)) AS average_artist_playback,
 		SUM(p.count) sum_artist_playbacks, MAX(p.count) AS max_artist_playbacks
-		FROM artist ar, track t, album_artist alar, playbacks p
+		FROM artist ar, track t, album_artist alar, playbacks p 
 		WHERE t.track_id = p.track_id
 		AND t.album_id = alar.album_id
 		AND ar.artist_id = alar.artist_id
 		AND p.country_code = "global"
 		GROUP BY ar.artist_id, ar.name, ar.photo
+		HAVING COUNT(t.track_id) > 3
 		ORDER BY AVG(p.count) DESC
 		LIMIT 10) AS artist_playbacks
 		JOIN (SELECT aa.artist_id AS art_id, t.name AS max_song, l.count AS play_count
 				FROM track t, playbacks l, album_artist aa
 				WHERE t.track_id = l.track_id AND l.country_code = "global"
-				AND t.album_id = aa.album_id) artist_songs
-		ON artist_playbacks.artist_id = artist_songs.art_id
+				AND t.album_id = aa.album_id) artist_songs 
+		ON artist_playbacks.artist_id = artist_songs.art_id 
 		AND artist_playbacks.max_artist_playbacks = artist_songs.play_count
-ORDER BY artist_playbacks.average_artist_playback DESC"""
+ORDER BY artist_playbacks.average_artist_playback DESC """
     return query
 
 
@@ -362,7 +363,7 @@ album.release_year AS release_year, album.genre AS genre, track.track_id AS trac
 FROM track, album, album_artist, artist
 WHERE MATCH(track.name) AGAINST ("{0}")"""
     for i in range(1, len(full_name)):
-        query += "AND MATCH(track.name) AGAINST(\"{0}\")".format(full_name[1])
+        query += "AND MATCH(track.name  ) AGAINST(\"{0}\")".format(full_name[1])
     query += """
 AND track.album_id = album.album_id
 AND track.album_id = album_artist.album_id
