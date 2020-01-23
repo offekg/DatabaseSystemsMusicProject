@@ -274,7 +274,7 @@ FROM
 	WHERE t.album_id = al.album_id
 	      AND al.album_id = ala.album_id
 	      AND ala.artist_id = a.artist_id
-	      AND t.name LIKE "%christmas%"
+	      AND MATCH (t.name) AGAINST("christmas") 
 	GROUP BY a.artist_id, a.name
 	LIMIT 10) AS christmas_songs,
 	track, album, artist
@@ -309,7 +309,7 @@ FROM
 	WHERE t.album_id = al.album_id
 	      AND al.album_id = ala.album_id
 	      AND ala.artist_id = a.artist_id
-	      AND (t.name LIKE "%love%")
+	      AND MATCH(t.name) AGAINST("love")
 	      AND al.release_year < 1980
 	GROUP BY a.artist_id, a.name
 	LIMIT 10) AS christmas_songs,
@@ -339,14 +339,18 @@ AND al.album_id = sinatra_songs.album_id"""
 
 
 def query_albums_by_artist_name(name):
+    full_name = name.split(",")
     query = """
 SELECT ar.name AS artist_name, al.name AS album_name, al.release_year AS release_year, al.album_id AS album_id
 FROM album al, album_artist ala, artist ar
-WHERE ar.name LIKE "%{0}%"
+WHERE MATCH(ar.name) AGAINST("{0}")""".format(full_name[0])
+    for i in range(1, len(full_name)):
+        query += "AND MATCH(ar.name) AGAINST(\"{0}\")".format(full_name[1])
+    query += """
 AND ar.artist_id = ala.artist_id
 AND ala.album_id = al.album_id
 ORDER BY ar.artist_id, al.release_year
-LIMIT 10""".format(name)
+LIMIT 10"""
     return query
 
 
@@ -355,11 +359,10 @@ def query_songs_like_name(name):
 SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
 album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id
 FROM track, album, album_artist, artist
-WHERE track.name like "%{0}%"
+WHERE MATCH(track.name) AGAINST ("{0}")
 AND track.album_id = album.album_id
 AND track.album_id = album_artist.album_id
 AND album_artist.artist_id = artist.artist_id
-
 LIMIT 10""".format(name)
     return query
 
