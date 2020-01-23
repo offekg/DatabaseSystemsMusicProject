@@ -336,3 +336,29 @@ track, album al
 WHERE track.track_id = sinatra_songs.track_id
 AND al.album_id = sinatra_songs.album_id"""
     return query
+
+
+def query_albums_by_artist_name(name):
+    query = """
+SELECT ar.name AS artist_name, al.name AS album_name, al.release_year AS release_year, al.album_id AS album_id
+FROM album al, album_artist ala, artist ar
+WHERE ar.name LIKE "%{0}%"
+AND ar.artist_id = ala.artist_id
+AND ala.album_id = al.album_id
+ORDER BY ar.artist_id, al.release_year""".format(name)
+    return query
+
+
+def query_songs_like_name(name):
+    query = """
+SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
+album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id
+FROM track, album, album_artist, artist
+WHERE track.name like "%{0}%"
+AND track.album_id = album.album_id
+AND track.album_id = album_artist.album_id
+AND album_artist.artist_id = artist.artist_id
+
+LIMIT 10""".format(name)
+    return query
+
