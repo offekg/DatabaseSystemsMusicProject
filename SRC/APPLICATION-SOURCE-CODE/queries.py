@@ -1,12 +1,20 @@
-def query1_full_text_artist_bio_search(search_for,year1,year2):
+def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2020):
+    search = search_items.split(",")
     query = """
-    
-    """
+SELECT NAME AS artist_name, birth_year, photo, artist_id
+FROM artist
+WHERE MATCH (bio) AGAINST("{0}")"""
+    for i in range(1,len(search)):
+        query += "AND MATCH (bio) AGAINST(\"{0}\")".format(search[i])
+    query += """
+AND artist.birth_year >= {0}
+AND artist.birth_year <= {1}
+    """.format(year1, year2)
     return query
 
 
 def query2_top_playbacks_per_countries(all_countries):
-    countries = all_countries.split(" ")
+    countries = all_countries.split(",")
 
     query = """
 SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
