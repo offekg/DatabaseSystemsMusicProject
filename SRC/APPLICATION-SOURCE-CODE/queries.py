@@ -240,7 +240,7 @@ LIMIT 10"""
 
 def query_pop_music():
     query = """
-SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
+SELECT DISTINCT t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
 FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
 WHERE t.track_id = p.track_id
       AND t.album_id = al.album_id
