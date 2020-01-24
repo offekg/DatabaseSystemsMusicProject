@@ -5,6 +5,7 @@ import Fade from "@material-ui/core/Fade";
 import Table from "@material-ui/core/Table";
 import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
+import ReactHtmlParser from "react-html-parser";
 import Backdrop from "@material-ui/core/Backdrop";
 import GridList from "@material-ui/core/GridList";
 import TableRow from "@material-ui/core/TableRow";
@@ -93,7 +94,8 @@ const useStyles = makeStyles(theme => ({
     color: "black"
   },
   whitespace: {
-    whiteSpace: "pre"
+    whiteSpace: "pre-wrap",
+    fontSize: "smaller"
   }
 }));
 
@@ -326,12 +328,11 @@ function PlaylistManager() {
             <div className={classes.paper}>
               <table color="white" width="100%">
                 <tr>
-                  <td height="10%">
+                  <td height="10%" width="60%">
                     <h2 id="modal-title">{modalData[0]}</h2>
                   </td>
-                  <td rowspan="2">
+                  <td rowspan="2" width="40%">
                     <Paper
-                      zDepth={5}
                       circle={true}
                       width="40%"
                       height="60%"
@@ -342,15 +343,15 @@ function PlaylistManager() {
                         borderTopLeftRadius: "50%"
                       }}
                     >
-                      <img alt="stam" src={modalData[2]} />
+                      <img alt="reltedImage" width="100%" src={modalData[2]} />
                     </Paper>
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    <h4 className={classes.whitespace} id="modal-description">
-                      {modalData[1]}
-                    </h4>
+                  <td width="60%">
+                    <p className={classes.whitespace} id="modal-description">
+                      {ReactHtmlParser(modalData[1])}
+                    </p>
                   </td>
                 </tr>
               </table>

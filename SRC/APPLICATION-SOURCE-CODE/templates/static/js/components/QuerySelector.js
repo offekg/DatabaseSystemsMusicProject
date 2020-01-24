@@ -13,6 +13,7 @@ import Paper from "@material-ui/core/Paper";
 import Rating from "@material-ui/lab/Rating";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
+import ReactHtmlParser from "react-html-parser";
 import Tooltip from "@material-ui/core/Tooltip";
 import { blue } from "@material-ui/core/colors";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -108,6 +109,10 @@ const useStyles = makeStyles(theme => ({
   },
   regularCell: {
     color: "black"
+  },
+  whitespace: {
+    whiteSpace: "pre-wrap",
+    fontSize: "smaller"
   }
 }));
 
@@ -270,35 +275,32 @@ function PlaylistManager() {
         >
           <Fade in={open}>
             <div className={classes.paper}>
-              <table color="white">
+              <table color="white" width="100%">
                 <tr>
-                  <td height="10%">
+                  <td height="10%" width="60%">
                     <h2 id="modal-title">{modalData[0]}</h2>
                   </td>
-                  <td rowspan="2">
+                  <td rowspan="2" width="40%">
                     <Paper
-                      zDepth={5}
                       circle={true}
+                      width="40%"
+                      height="60%"
                       style={{
+                        align: "right",
                         overflow: "hidden",
                         borderBottomLeftRadius: "50%",
                         borderTopLeftRadius: "50%"
                       }}
                     >
-                      <img
-                        width="200px"
-                        height="250px"
-                        alt="stam"
-                        src={modalData[2]}
-                      />
+                      <img alt="reltedImage" width="100%" src={modalData[2]} />
                     </Paper>
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    <h4 id="modal-description">
-                      <pre>{modalData[1]}</pre>
-                    </h4>
+                  <td width="60%">
+                    <p className={classes.whitespace} id="modal-description">
+                      {ReactHtmlParser(modalData[1])}
+                    </p>
                   </td>
                 </tr>
               </table>

@@ -3,7 +3,7 @@ def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2020):
     query = """
 SELECT NAME AS artist_name, birth_year, photo, artist_id
 FROM artist
-WHERE MATCH (bio) AGAINST("{0}")"""
+WHERE MATCH (bio) AGAINST("{0}")""".format(search[0])
     for i in range(1,len(search)):
         query += "AND MATCH (bio) AGAINST(\"{0}\")".format(search[i])
     query += """
@@ -28,7 +28,7 @@ WHERE ("""
 
     query += "country.name = \"{0}\"\n".format(countries[0])
     for i in range(1, len(countries)):
-        query += "\tOR country.name == \"{0}\"\n".format(countries[i])
+        query += "\tOR country.name = \"{0}\"\n".format(countries[i])
 
     query += """\t)
 GROUP BY track.track_id, track.name, track.duration, artist.name, artist.artist_id ,album.name
@@ -113,7 +113,7 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 track.track_number AS track_number,
+		 album.release_year AS release_year
 		 playbacks.count AS total_plays, track.track_id AS track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
@@ -203,7 +203,7 @@ AND album_artist.album_id = album.album_id""".format(artist_id)
     return query
 
 
-def query_album (album_id):
+def query_album(album_id):
     query = """
 SELECT album.name AS album_name, artist.name AS artist_name,
 album.release_year AS album_release_year, album.genre AS album_genre, album.photo AS album_photo_url, artist.artist_id, album.album_id
@@ -361,7 +361,7 @@ def query_songs_like_name(name):
 SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
 album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id
 FROM track, album, album_artist, artist
-WHERE MATCH(track.name) AGAINST ("{0}")"""
+WHERE MATCH(track.name) AGAINST ("{0}")""".format(full_name[0])
     for i in range(1, len(full_name)):
         query += "AND MATCH(track.name  ) AGAINST(\"{0}\")".format(full_name[1])
     query += """

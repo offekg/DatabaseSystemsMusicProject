@@ -90,10 +90,10 @@ def additional_info_song(id):
 
     response = {'name': record[0]}
 
-    body = F'Artist: {record[1]}\n'
-    body += F'Album: {record[2]}\n'
-    body += F'Release Year: {record[3]}\n'
-    body += F'Genre: {record[4]}\n'
+    body = F'<b>Artist</b>: {record[1]}\n'
+    body += F'<b>Album</b>: {record[2]}\n'
+    body += F'<b>Release Year</b>: {record[3]}\n'
+    body += F'<b>Genre</b>: {record[4]}\n'
 
     response['body'] = body
     response['image'] = record[6]
@@ -106,11 +106,13 @@ def additional_info_artist(id):
 
     response = {'name': bio[0]}
 
-    body = F'Bio: {bio[1]}\n'
-    body += F'Most Played Song: {bio[2]} ({bio[3]} Times)\n'
-    body += F'Discography:\n'
+    body = F'<b>Bio</b>: {bio[1]}\n'
+    body += F'<b>Most Played Song</b>: {bio[2]} ({bio[3]} Times)\n'
+    body += F'<b>Discography</b>:\n'
+    body += F'<table><tr><th>Name</th><th>Year Released</th></tr>\n'
     for album in discs:
-        body += F'{album[0]} | {album[1]} | {album[2]}\n'
+        body += F'<tr><td>{album[0]}</td><td>{album[1]}</td></tr>\n'
+    body += '</table>'
 
     response['body'] = body
     response['image'] = bio[4]
@@ -123,10 +125,10 @@ def additional_info_album(id):
 
     response = {'name': info[0]}
 
-    body = F'Artist: {info[1]}\n'
-    body += F'Release Year: {info[2]}\n'
-    body += F'Genre: {info[3]}\n'
-    body += F'Songs:\n'
+    body = F'<b>Artist</b>: {info[1]}\n'
+    body += F'<b>Release Year</b>: {info[2]}\n'
+    body += F'<b>Genre</b>: {info[3]}\n'
+    body += F'<b>Songs</b>:\n'
     for song in songs:
         body += F'Track #{song[0]} - {song[1]}\n'
 
