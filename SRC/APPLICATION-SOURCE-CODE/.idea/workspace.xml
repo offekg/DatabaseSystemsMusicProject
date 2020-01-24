@@ -43,14 +43,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/queries.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="373" selection-start-line="373" selection-end-line="373" />
+            <state relative-caret-position="6324">
+              <caret line="372" selection-start-line="372" selection-end-line="372" />
               <folding>
-                <marker date="1579825705641" expanded="true" signature="77:482" ph="..." />
-                <marker date="1579825705641" expanded="true" signature="9808:9813" ph="..." />
-                <marker date="1579825705641" expanded="true" signature="12706:13239" ph="..." />
-                <marker date="1579825705641" expanded="true" signature="13279:13284" ph="..." />
-                <marker date="1579825705641" expanded="true" signature="13840:13841" ph="..." />
+                <marker date="1579826090495" expanded="true" signature="77:482" ph="..." />
               </folding>
             </state>
           </provider>
@@ -162,7 +158,7 @@
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4733096" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.15658364" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -178,14 +174,10 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/queries.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="373" selection-start-line="373" selection-end-line="373" />
+        <state relative-caret-position="6324">
+          <caret line="372" selection-start-line="372" selection-end-line="372" />
           <folding>
-            <marker date="1579825705641" expanded="true" signature="77:482" ph="..." />
-            <marker date="1579825705641" expanded="true" signature="9808:9813" ph="..." />
-            <marker date="1579825705641" expanded="true" signature="12706:13239" ph="..." />
-            <marker date="1579825705641" expanded="true" signature="13279:13284" ph="..." />
-            <marker date="1579825705641" expanded="true" signature="13840:13841" ph="..." />
+            <marker date="1579826090495" expanded="true" signature="77:482" ph="..." />
           </folding>
         </state>
       </provider>
