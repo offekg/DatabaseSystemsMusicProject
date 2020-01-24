@@ -13,6 +13,9 @@ AND artist.birth_year <= {1}
     return query
 
 
+print(query1_full_text_artist_bio_search("songwriter,producer"))
+
+
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(",")
 
@@ -141,7 +144,7 @@ FROM
 	AND alar.artist_id = ar.artist_id
 	AND t.album_id = al.album_id
 	AND p.country_code = "global"
-	AND al.genre = "pop"  #genre chosen by user
+	AND al.genre = "{0}"
 	GROUP BY ar.artist_id, ar.name
 	ORDER BY SUM(p.count) DESC
 	LIMIT 10) AS top_singers
