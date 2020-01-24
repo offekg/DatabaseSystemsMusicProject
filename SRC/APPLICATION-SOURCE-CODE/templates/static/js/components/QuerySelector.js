@@ -465,8 +465,6 @@ async function UpdatePlaylistData(selected, _callback) {
 }
 
 async function buildUrl(selected) {
-  console.log(selected);
-  console.log(typeof selected);
   var url = "./query?queryNum=" + selected;
   switch (selected) {
     case 1:
