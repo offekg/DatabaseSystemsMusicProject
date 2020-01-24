@@ -28,9 +28,7 @@ import FormControl from "@material-ui/core/FormControl";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import TableContainer from "@material-ui/core/TableContainer";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -75,7 +73,8 @@ const useStyles = makeStyles(theme => ({
   },
   wrapper: {
     margin: theme.spacing(1),
-    position: "relative"
+    position: "relative",
+    left: "30%"
   },
   fabProgress: {
     color: blue[500],
@@ -173,9 +172,17 @@ function PlaylistManager() {
   const queryNum = parseInt(document.getElementById("queryNum").value, 10);
   const handleClickOpen = index => {
     switch (queryNum) {
+      case 1:
+        UpdateModalData("artist", index, setOpen);
+        break;
+      case 2:
       case 3:
       case 4:
+      case 6:
         UpdateModalData("song", index, setOpen);
+        break;
+      case 5:
+        UpdateModalData("album", index, setOpen);
         break;
       default:
         break;
@@ -351,12 +358,11 @@ export default function MainSection() {
     3: <QueryArgs3 />,
     4: <QueryArgs4 />,
     5: <QueryArgs5 />,
-    6: <QueryArgs6 />,
-    7: <QueryArgs7 />
+    6: <QueryArgs6 />
   };
 
   const queryButtons = [];
-  for (let i = 1; i < 8; i++) {
+  for (let i = 1; i < 7; i++) {
     queryButtons.push(
       <Button
         startIcon={selected !== i ? <ChevronRightIcon /> : <ExpandMoreIcon />}
@@ -373,6 +379,7 @@ export default function MainSection() {
             setArgs(queryNumToArgs[i]);
             setSendShown(
               <SendButton
+                align="center"
                 success={success}
                 handleButtonClick={handleButtonClick}
               />
@@ -380,7 +387,7 @@ export default function MainSection() {
           }
         }}
       >
-        Query #{i}
+        {queryNames[i]}
       </Button>
     );
   }
@@ -458,11 +465,18 @@ async function UpdatePlaylistData(selected, _callback) {
 }
 
 async function buildUrl(selected) {
-  console.log(selected);
-  console.log(typeof selected);
   var url = "./query?queryNum=" + selected;
   switch (selected) {
     case 1:
+      url +=
+        "&search=" +
+        document.getElementById("wordSelector").value +
+        "," +
+        document.getElementById("manualWords").value +
+        "&fromYear=" +
+        document.getElementById("fromYear1").value +
+        "&toYear=" +
+        document.getElementById("toYear1").value;
       return url;
     case 2:
       url += "&countries=" + document.getElementById("countrySelector").value;
@@ -478,10 +492,10 @@ async function buildUrl(selected) {
       url += "&genre=" + document.getElementById("genreSelector").value;
       return url;
     case 5:
+      url += "&search=" + document.getElementById("searchByArtist").value;
       return url;
     case 6:
-      return url;
-    case 7:
+      url += "&search=" + document.getElementById("songByName").value;
       return url;
     default:
       return url;
@@ -512,25 +526,18 @@ function UpdateModalData(queryType, id, _callback) {
 }
 
 const queryHeaders = {
-  1: ["Times Played", "Name", "Artist", "Length", "Album"],
-  2: ["Times Played", "Name", "Artist", "Length", "Album"],
-  3: ["Name", "Artist", "Times Played", "Most Played Song", "Total Song Plays"],
+  1: ["Name", "Birth Year", "Photo"],
+  2: ["Times Played", "Name", "Artist", "Duration", "Album"],
+  3: ["Name", "Artist", "Album", "Track Number In Album", "Times Played"],
   4: [
     "Name",
-    "Average Times Played",
-    "Total Times Played",
-    "Most Played Song",
-    "Total Song Plays"
-  ],
-  5: ["Name", "Artist", "Album Length", "Longest Song", "Album Cover"],
-  6: ["Name", "Artist", "Album", "Total Times Played", "Release year"],
-  7: [
-    "Name",
-    "Total Times Played",
+    "Times Played",
     "Artist",
     "Album",
-    "Total Plays of Artist in Genre"
-  ]
+    "Total Artist's Played In Genre"
+  ],
+  5: ["Name", "Album", "Release year"],
+  6: ["Name", "Artist", "Album", "Release year", "Genre"]
 };
 
 function UpdatePlaylistHeaders(queryNum) {
@@ -548,31 +555,65 @@ function UpdatePlaylistHeaders(queryNum) {
 function QueryArgs1() {
   const classes = useStyles();
 
-  UpdatePlaylistHeaders(2);
+  UpdatePlaylistHeaders(1);
+
+  const theme = useTheme();
+  const [word, setWord] = React.useState([]);
+
+  const handleChange = e => {
+    setWord(e.target.value);
+  };
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="1" />
       <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
+        <FormControl className={classes.formControl}>
+          <InputLabel id="demo-mutiple-chip-label">
+            Pre-defind options
           </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
+          <Select
+            labelId="demo-mutiple-chip-label"
+            id="words"
+            multiple
+            value={word}
+            onChange={handleChange}
+            input={<Input id="wordSelector" />}
+            renderValue={selected => (
+              <div className={classes.chips}>
+                {selected.map(value => (
+                  <Chip key={value} label={value} className={classes.chip} />
+                ))}
+              </div>
+            )}
+            MenuProps={MenuProps}
+          >
+            {fullTextOptions.map(name => (
+              <MenuItem
+                key={name}
+                value={name}
+                style={getStyles(name, word, theme)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
       </div>
       <div>
         <TextField
           fullWidth
-          id="outlined-number"
-          label="Number"
+          id="manualWords"
+          label="Enter Text To Search"
+          type="search"
+          variant="outlined"
+        />
+      </div>
+      <div>
+        <TextField
+          fullWidth
+          id="fromYear1"
+          label="From Year"
           type="number"
           InputLabelProps={{
             shrink: true
@@ -583,36 +624,12 @@ function QueryArgs1() {
       <div>
         <TextField
           fullWidth
-          required
-          id="outlined-search"
-          label="Search field"
-          type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={countries}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
+          id="toYear1"
+          label="To Year"
+          type="number"
+          InputLabelProps={{
+            shrink: true
+          }}
           variant="outlined"
         />
       </div>
@@ -623,7 +640,7 @@ function QueryArgs1() {
 function QueryArgs2() {
   const classes = useStyles();
 
-  UpdatePlaylistHeaders(1);
+  UpdatePlaylistHeaders(2);
 
   const theme = useTheme();
   const [countryName, setCountryName] = React.useState([]);
@@ -743,65 +760,12 @@ function QueryArgs5() {
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="5" />
       <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          id="outlined-number"
-          label="Number"
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          variant="outlined"
-        />
-      </div>
-      <div>
         <TextField
           fullWidth
           required
-          id="outlined-search"
-          label="Search field"
+          id="searchByArtist"
+          label="Enter Artist Name To Search"
           type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={countries}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
           variant="outlined"
         />
       </div>
@@ -818,140 +782,12 @@ function QueryArgs6() {
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="6" />
       <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          id="outlined-number"
-          label="Number"
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          variant="outlined"
-        />
-      </div>
-      <div>
         <TextField
           fullWidth
           required
-          id="outlined-search"
-          label="Search field"
+          id="songByName"
+          label="Enter Text To Search"
           type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={countries}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
-          variant="outlined"
-        />
-      </div>
-    </form>
-  );
-}
-
-function QueryArgs7() {
-  const classes = useStyles();
-
-  UpdatePlaylistHeaders(7);
-
-  return (
-    <form className={classes.root} noValidate autoComplete="off">
-      <input type="hidden" id="queryNum" name="queryNum" value="7" />
-      <div>
-        <FormControl fullWidth className={classes.margin}>
-          <InputLabel htmlFor="input-with-icon-adornment">
-            This is QueryArgs2
-          </InputLabel>
-          <Input
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountCircle />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          id="outlined-number"
-          label="Number"
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-search"
-          label="Search field"
-          type="search"
-          variant="outlined"
-        />
-      </div>
-      <div>
-        <Autocomplete
-          fullWidth
-          id="combo-box-demo"
-          options={countries}
-          getOptionLabel={option => option.title}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Combo box"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <TextField
-          fullWidth
-          required
-          id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
           variant="outlined"
         />
       </div>
@@ -1101,3 +937,26 @@ const genres = [
   "Trance",
   "Trap"
 ];
+
+const fullTextOptions = [
+  "singer",
+  "songwriter",
+  "rapper",
+  "actor",
+  "actress",
+  "dancer",
+  "producer",
+  "author",
+  "band",
+  "jewish",
+  "canadian"
+];
+
+const queryNames = {
+  1: "Search Artists By Keywords and Birth Year",
+  2: "Most Popular Songs By Countries",
+  3: "Most Popular Songs By Release Years",
+  4: "Top Song Of Top Artists By Genre",
+  5: "Albums By Artist Name",
+  6: "Songs By Name"
+};

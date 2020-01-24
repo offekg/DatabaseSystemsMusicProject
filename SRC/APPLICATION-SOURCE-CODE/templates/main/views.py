@@ -4,10 +4,12 @@ from templates.main.query import regular_query, additional_info_song, additional
 import simplejson as json
 
 query_num_to_reuired_args = {
-	'1': None,
+	'1': ['search', 'fromYear1', 'toYear1'],
     '2': ['countries'],
     '3': ['fromYear', 'toYear'],
     '4': ['genre'],
+    '5': ['search'],
+    '6': ['search']
 }
 
 @main_blueprint.route('/')
