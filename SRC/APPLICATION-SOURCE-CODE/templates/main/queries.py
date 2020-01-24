@@ -41,7 +41,7 @@ LIMIT 10"""
 def query3_top_albums_by_global_playback():
     query = """
 SELECT  album_name, artist_name, total_global_playbacks, tl.max_song AS max_song_name,
-        tl.play_count AS max_song_plays, photo_link, album_id
+        tl.play_count AS max_song_plays, album_id
 FROM (SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name, artist.artist_id AS artist_id,
 SUM(playbacks.count) AS total_global_playbacks, album.photo AS photo_link, MAX(playbacks.count) AS max_plays
 		FROM track, album, artist, album_artist, playbacks
@@ -67,7 +67,7 @@ SELECT artist_playbacks.artist_name AS artist_name,
 artist_playbacks.average_artist_playback AS average_artist_playback,
 artist_playbacks.sum_artist_playbacks AS sum_artist_playbacks,
 artist_songs.max_song AS most_played_song, artist_songs.play_count AS most_played_sound_count,
-artist_playbacks.photo, artist_playbacks.artist_id
+artist_playbacks.artist_id
 FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS photo, ROUND(AVG(p.count)) AS average_artist_playback,
 		SUM(p.count) sum_artist_playbacks, MAX(p.count) AS max_artist_playbacks
 		FROM artist ar, track t, album_artist alar, playbacks p
@@ -76,6 +76,7 @@ FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS phot
 		AND ar.artist_id = alar.artist_id
 		AND p.country_code = "global"
 		GROUP BY ar.artist_id, ar.name, ar.photo
+		HAVING COUNT(t.track_id) > 3
 		ORDER BY AVG(p.count) DESC
 		LIMIT 10) AS artist_playbacks
 		JOIN (SELECT aa.artist_id AS art_id, t.name AS max_song, l.count AS play_count
@@ -84,13 +85,13 @@ FROM( SELECT ar.artist_id AS artist_id, ar.name AS artist_name, ar.photo AS phot
 				AND t.album_id = aa.album_id) artist_songs
 		ON artist_playbacks.artist_id = artist_songs.art_id
 		AND artist_playbacks.max_artist_playbacks = artist_songs.play_count
-ORDER BY artist_playbacks.average_artist_playback DESC"""
+ORDER BY artist_playbacks.average_artist_playback DESC """
     return query
 
 
 def query5_longest_albums():
     query = """
-SELECT album_name, artist_name, album_length, t.name AS longest_song, album_photo, longest_song,
+SELECT album_name, artist_name, album_length, t.name AS longest_song, longest_song,
 longest_albums.album_id, longest_albums.artist_id, track_id
 FROM
 	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
@@ -112,7 +113,8 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 track.track_number AS track_number, playbacks.count AS total_plays, track.track_id AS track_id
+		 track.track_number AS track_number,
+		 playbacks.count AS total_plays, track.track_id AS track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
 ((album INNER JOIN album_artist ON album.album_id = album_artist.album_id)
@@ -238,7 +240,7 @@ LIMIT 10"""
 
 def query_pop_music():
     query = """
-SELECT DISTINCT t.track_id, t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
+SELECT DISTINCT t.name AS Track, a.name AS Artist, t.duration AS Duration, p.count AS Streams, t.track_id
 FROM track AS t, playbacks AS p, album AS al, album_artist AS ala, artist AS a
 WHERE t.track_id = p.track_id
       AND t.album_id = al.album_id
@@ -293,8 +295,8 @@ AND al.album_id = t.album_id
 AND al.album_id = ala.album_id
 AND ala.artist_id = ar.artist_id
 AND al.release_year = 2019
-
-ORDER BY p.count desc"""
+ORDER BY p.count desc
+LIMIT 10"""
     return query
 
 
@@ -361,7 +363,7 @@ album.release_year AS release_year, album.genre AS genre, track.track_id AS trac
 FROM track, album, album_artist, artist
 WHERE MATCH(track.name) AGAINST ("{0}")"""
     for i in range(1, len(full_name)):
-        query += "AND MATCH(track.name) AGAINST(\"{0}\")".format(full_name[1])
+        query += "AND MATCH(track.name  ) AGAINST(\"{0}\")".format(full_name[1])
     query += """
 AND track.album_id = album.album_id
 AND track.album_id = album_artist.album_id
