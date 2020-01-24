@@ -113,7 +113,7 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 album.release_year AS release_year
+		 album.release_year AS release_year,
 		 playbacks.count AS total_plays, track.track_id AS track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
