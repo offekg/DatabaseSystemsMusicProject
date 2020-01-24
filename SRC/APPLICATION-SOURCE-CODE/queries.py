@@ -13,14 +13,14 @@ AND artist.birth_year <= {1}
     return query
 
 
-print(query1_full_text_artist_bio_search("songwriter,producer"))
+#print(query1_full_text_artist_bio_search("songwriter"))
 
 
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(",")
 
     query = """
-SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
+SELECT track.name AS track_name, SUM(playbacks.count) AS num_plays,  artist.name AS artist_name,
 	 track.duration AS duration, album.name AS album_name, track.track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN country ON playbacks.country_code = country.country_code
@@ -131,6 +131,9 @@ LIMIT 10""".format(year1, year2)
     return query
 
 
+#print(query6_most_played_between_year1_year2(2000,2017))
+
+
 def query7_top_song_from_top_artist_in_genre(genre):
     query = """
 SELECT top_track_name, top_track_plays, artist_name, top_track_album, total_artist_plays_in_genre, track_id
@@ -164,7 +167,7 @@ ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
 #print(query3_top_albums_by_global_playback())
 #print( query4_top_artists_by_avg_global_playbacks())
 #print(query6_most_played_between_year1_year2(2000,2012))
-#print(query7_top_song_from_top_artist_in_genre("rock"))"""
+#print(query7_top_song_from_top_artist_in_genre("blues"))
 
 
 def query_track(track_id):
