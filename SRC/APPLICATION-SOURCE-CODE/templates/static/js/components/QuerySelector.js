@@ -474,11 +474,11 @@ async function buildUrl(selected) {
       const wordSelector = document.getElementById("wordSelector").value;
       const manualWords = document.getElementById("manualWords").value;
 
-      if (wordSelector != null && manualWords != null)
+      if (!(wordSelector === "") && !(manualWords === "")) {
         searchWords = wordSelector + "," + manualWords;
-      else if (wordSelector != null && manualWords == null)
+      } else if (!(wordSelector === "") && manualWords === "")
         searchWords = wordSelector;
-      else if (wordSelector == null && manualWords != null)
+      else if (wordSelector === "" && !(manualWords === ""))
         searchWords = manualWords;
 
       url +=
@@ -539,7 +539,7 @@ function UpdateModalData(queryType, id, _callback) {
 const queryHeaders = {
   1: ["Name", "Birth Year", "Photo"],
   2: ["Name", "Times Played", "Artist", "Duration", "Album"],
-  3: ["Name", "Artist", "Album", "Track Number In Album", "Times Played"],
+  3: ["Name", "Artist", "Album", "Release year", "Times Played"],
   4: [
     "Name",
     "Times Played",
@@ -547,7 +547,7 @@ const queryHeaders = {
     "Album",
     "Total Artist's Played In Genre"
   ],
-  5: ["Name", "Album", "Release year"],
+  5: ["Album", "Artist", "Release year"],
   6: ["Name", "Artist", "Album", "Release year", "Genre"]
 };
 

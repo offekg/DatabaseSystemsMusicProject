@@ -86,8 +86,6 @@ def query_for_me(query_type, query_data):
 
 def additional_info_song(id):
     record = query_for_me('song', id)[0]
-    print('record ' + str(record))
-
     response = {'name': record[0]}
 
     body = F'<b>Artist</b>: {record[1]}\n'
@@ -121,8 +119,7 @@ def additional_info_artist(id):
     return response
 
 def additional_info_album(id):
-    info = query_for_me('album1', id)
-    print(info)
+    info = query_for_me('album1', id)[0]
     songs = query_for_me('album2', id)
 
     response = {'name': info[0]}

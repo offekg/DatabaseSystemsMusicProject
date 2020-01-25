@@ -9,7 +9,7 @@ WHERE MATCH (bio) AGAINST("{0}")""".format(search[0])
     query += """
 AND artist.birth_year >= {0}
 AND artist.birth_year <= {1}
-    """.format(year1, year2)
+LIMIT 10""".format(year1, year2)
     return query
 
 
@@ -351,7 +351,7 @@ AND al.album_id = sinatra_songs.album_id"""
 def query_albums_by_artist_name(name):
     full_name = name.split(",")
     query = """
-SELECT ar.name AS artist_name, al.name AS album_name, al.release_year AS release_year, al.album_id AS album_id
+SELECT al.name AS album_name, ar.name AS artist_name, al.release_year AS release_year, al.album_id AS album_id
 FROM album al, album_artist ala, artist ar
 WHERE MATCH(ar.name) AGAINST("{0}")""".format(full_name[0])
     for i in range(1, len(full_name)):
