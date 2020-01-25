@@ -385,7 +385,7 @@ const queryHeaders = {
   17: ["Name", "Artist", "Duration", "Total Plays"],
   18: ["Name", "Duration", "Artist", "Album"],
   19: ["Name", "Total Plays", "Artist", "Album"],
-  20: ["Name", "Duration", "Release Year", "Album"]
+  20: ["Name", "Duration", "Album", "Release Year"]
 };
 
 function UpdatePlaylistHeaders(queryNum) {

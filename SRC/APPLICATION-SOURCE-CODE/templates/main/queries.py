@@ -1,4 +1,5 @@
 def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2020):
+    print(search_items, year1, year2)
     search = search_items.split(",")
     query = """
 SELECT NAME AS artist_name, birth_year, photo, artist_id
@@ -13,11 +14,14 @@ AND artist.birth_year <= {1}
     return query
 
 
+#print(query1_full_text_artist_bio_search("songwriter"))
+
+
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(",")
 
     query = """
-SELECT SUM(playbacks.count) AS num_plays, track.name AS track_name, artist.name AS artist_name,
+SELECT track.name AS track_name, SUM(playbacks.count) AS num_plays,  artist.name AS artist_name,
 	 track.duration AS duration, album.name AS album_name, track.track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN country ON playbacks.country_code = country.country_code
@@ -113,7 +117,7 @@ ORDER BY album_length DESC"""
 def query6_most_played_between_year1_year2(year1, year2):
     query = """
 SELECT track.name as track_name, artist.name AS artist_name, album.name AS album_name,
-		 album.release_year AS release_year
+		 album.release_year AS release_year,
 		 playbacks.count AS total_plays, track.track_id AS track_id
 FROM (track INNER JOIN playbacks ON track.track_id = playbacks.track_id)
 LEFT JOIN
@@ -126,6 +130,9 @@ AND album.release_year <= {1}
 ORDER BY playbacks.count DESC
 LIMIT 10""".format(year1, year2)
     return query
+
+
+#print(query6_most_played_between_year1_year2(2000,2017))
 
 
 def query7_top_song_from_top_artist_in_genre(genre):
@@ -141,7 +148,7 @@ FROM
 	AND alar.artist_id = ar.artist_id
 	AND t.album_id = al.album_id
 	AND p.country_code = "global"
-	AND al.genre = "pop"  #genre chosen by user
+	AND al.genre = "{0}"
 	GROUP BY ar.artist_id, ar.name
 	ORDER BY SUM(p.count) DESC
 	LIMIT 10) AS top_singers
@@ -161,7 +168,7 @@ ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
 #print(query3_top_albums_by_global_playback())
 #print( query4_top_artists_by_avg_global_playbacks())
 #print(query6_most_played_between_year1_year2(2000,2012))
-#print(query7_top_song_from_top_artist_in_genre("rock"))"""
+#print(query7_top_song_from_top_artist_in_genre("blues"))
 
 
 def query_track(track_id):

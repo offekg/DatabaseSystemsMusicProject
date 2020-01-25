@@ -470,11 +470,20 @@ async function buildUrl(selected) {
   var url = "./query?queryNum=" + selected;
   switch (selected) {
     case 1:
+      var searchWords = "";
+      const wordSelector = document.getElementById("wordSelector").value;
+      const manualWords = document.getElementById("manualWords").value;
+
+      if (wordSelector != null && manualWords != null)
+        searchWords = wordSelector + "," + manualWords;
+      else if (wordSelector != null && manualWords == null)
+        searchWords = wordSelector;
+      else if (wordSelector == null && manualWords != null)
+        searchWords = manualWords;
+
       url +=
         "&search=" +
-        document.getElementById("wordSelector").value +
-        "," +
-        document.getElementById("manualWords").value +
+        searchWords +
         "&fromYear=" +
         document.getElementById("fromYear1").value +
         "&toYear=" +
@@ -529,7 +538,7 @@ function UpdateModalData(queryType, id, _callback) {
 
 const queryHeaders = {
   1: ["Name", "Birth Year", "Photo"],
-  2: ["Times Played", "Name", "Artist", "Duration", "Album"],
+  2: ["Name", "Times Played", "Artist", "Duration", "Album"],
   3: ["Name", "Artist", "Album", "Track Number In Album", "Times Played"],
   4: [
     "Name",
@@ -886,30 +895,19 @@ const countries = [
 const genres = [
   "Acoustic",
   "Alternative Hip-Hop",
-  "Alternative Metal",
   "Alternative Rock",
-  "Asian",
   "BlueGrass",
   "Blues",
-  "Christmas",
   "Classic Rock",
   "Country",
-  "Country Pop",
   "Dance",
-  "Dancehall",
   "Deep House",
-  "Disco",
-  "Downtempo",
-  "Drum & Bass",
-  "Dubstep",
   "Electro House",
   "Electronic",
-  "Experimental",
   "Folk",
   "Funk",
   "Grime",
   "Hard Rock",
-  "Heavy Metal",
   "Hip-Hop",
   "House",
   "Indie",
@@ -919,24 +917,16 @@ const genres = [
   "Latin",
   "Metal",
   "Musical",
-  "New Wave",
-  "OST",
   "Pop",
   "Pop-Punk",
   "Pop-Rock",
-  "Progressive Rock",
-  "Psychedelic Rock",
   "R&B",
   "Rap",
+  "Reggae",
   "Reggae fusion",
-  "Rock",
-  "Rock & Roll",
   "Singer Songwriter",
   "Soul",
-  "Swing",
   "Synthpop",
-  "Techno",
-  "Trance",
   "Trap"
 ];
 

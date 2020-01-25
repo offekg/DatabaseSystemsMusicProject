@@ -91,12 +91,13 @@ def additional_info_song(id):
     response = {'name': record[0]}
 
     body = F'<b>Artist</b>: {record[1]}\n'
-    body += F'<b>Album</b>: {record[2]}\n'
-    body += F'<b>Release Year</b>: {record[3]}\n'
-    body += F'<b>Genre</b>: {record[4]}\n'
+    body += F'<b>Duration</b>: {record[2]}\n'
+    body += F'<b>Album</b>: {record[3]}\n'
+    body += F'<b>Release Year</b>: {record[4]}\n'
+    body += F'<b>Genre</b>: {record[5]}\n'
 
     response['body'] = body
-    response['image'] = record[6]
+    response['image'] = record[7]
 
     return response
 
@@ -120,7 +121,8 @@ def additional_info_artist(id):
     return response
 
 def additional_info_album(id):
-    info = query_for_me('album1', id)[0]
+    info = query_for_me('album1', id)
+    print(info)
     songs = query_for_me('album2', id)
 
     response = {'name': info[0]}

@@ -4,7 +4,7 @@ from templates.main.query import regular_query, additional_info_song, additional
 import simplejson as json
 
 query_num_to_reuired_args = {
-	'1': ['search', 'fromYear1', 'toYear1'],
+	'1': ['search', 'fromYear', 'toYear'],
     '2': ['countries'],
     '3': ['fromYear', 'toYear'],
     '4': ['genre'],
@@ -24,7 +24,9 @@ def query():
 	required_args = query_num_to_reuired_args.get(query_num)
 	if required_args:
 		for arg in required_args:
-			query_args.append(request.args.get(arg))
+			current_arg = request.args.get(arg)
+			if current_arg:
+				query_args.append(current_arg)
 
 	return json.dumps(regular_query(query_num, *query_args))
 
