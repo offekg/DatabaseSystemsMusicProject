@@ -28,7 +28,51 @@ def query():
 			if current_arg:
 				query_args.append(current_arg)
 
-	return json.dumps(regular_query(query_num, *query_args))
+	records = regular_query(query_num, *query_args)
+	# if query_num == '2':
+	# 	for record in records:
+	# 		millis = int(record[3])
+	# 		seconds=int((millis/1000)%60)
+	# 		minutes=int((millis/(1000*60))%60)
+	# 		song_duration = F'{minutes}:{seconds}'
+	# 		record = record[:3] + (song_duration) + record[4:]
+	#
+	#
+	# records = regular_query(query_num, *query_args)
+	# if query_num == '13':
+	# 	for record in records:
+	# 		millis = int(record[2])
+	# 		seconds=int((millis/1000)%60)
+	# 		minutes=int((millis/(1000*60))%60)
+	# 		hours=int((millis/(1000*60*60))%60)
+	# 		album_duration = F'{hours}:{minutes}:{seconds}'
+	#
+	# 		millis = int(record[4])
+	# 		seconds=int((millis/1000)%60)
+	# 		minutes=int((millis/(1000*60))%60)
+	# 		song_duration = F'{minutes}:{seconds}'
+	#
+	# 		record = record[:2] + (album_duration) + record[3] + (song_duration) + record[5:]
+	#
+	# if query_num in ['14', '15', '16', '17']:
+	# 	for record in records:
+	# 		millis = int(record[2])
+	# 		seconds=int((millis/1000)%60)
+	# 		minutes=int((millis/(1000*60))%60)
+	# 		song_duration = F'{minutes}:{seconds}'
+	# 		record = record[:3] + (song_duration) + record[4:]
+	#
+	#
+	# if query_num in ['18', '20']:
+	# 	for record in records:
+	# 		millis = int(record[2])
+	# 		seconds=int((millis/1000)%60)
+	# 		minutes=int((millis/(1000*60))%60)
+	# 		song_duration = F'{minutes}:{seconds}'
+	# 		record = record[:3] + (song_duration) + record[4:]
+
+
+	return json.dumps(records)
 
 @main_blueprint.route('/modal', methods=['GET'])
 def modal():
@@ -37,6 +81,13 @@ def modal():
 
 	if query_type == 'song':
 		data = additional_info_song(id)
+		# for record in records:
+		# 	millis = int(record[2])
+		# 	seconds=int((millis/1000)%60)
+		# 	minutes=int((millis/(1000*60))%60)
+		# 	song_duration = F'{minutes}:{seconds}'
+		# 	record = record[:3] + (song_duration) + record[4:]
+
 		return json.dumps(data)
 
 	elif query_type == 'artist':

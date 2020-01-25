@@ -13,9 +13,6 @@ LIMIT 10""".format(year1, year2)
     return query
 
 
-#print(query1_full_text_artist_bio_search("songwriter"))
-
-
 def query2_top_playbacks_per_countries(all_countries):
     countries = all_countries.split(",")
 
@@ -95,7 +92,7 @@ ORDER BY artist_playbacks.average_artist_playback DESC """
 def query5_longest_albums():
     query = """
 SELECT album_name, artist_name, album_length, t.name AS longest_song, longest_song,
-longest_albums.album_id, longest_albums.artist_id, album_id
+longest_albums.album_id, longest_albums.artist_id, t.album_id AS album_id
 FROM
 	(SELECT album.album_id AS album_id, album.name AS album_name, artist.name AS artist_name,
 	SUM(track.duration) AS album_length, MAX(track.duration) AS longest_song, album.photo AS album_photo, artist.artist_id AS artist_id
@@ -131,9 +128,6 @@ LIMIT 10""".format(year1, year2)
     return query
 
 
-#print(query6_most_played_between_year1_year2(2000,2017))
-
-
 def query7_top_song_from_top_artist_in_genre(genre):
     query = """
 SELECT top_track_name, top_track_plays, artist_name, top_track_album, total_artist_plays_in_genre, track_id
@@ -161,13 +155,6 @@ JOIN (SELECT t2.name AS top_track_name, t2.track_id AS track_id, ar2.artist_id A
 ON top_singers.artist_id = tracks_plays.ar_id AND top_singers.max_song_plays = tracks_plays.top_track_plays
 ORDER BY top_singers.total_artist_plays_in_genre desc""".format(genre)
     return query
-
-#print(query2_top_playbacks_per_countries("\"us\""))
-#print(query2_top_playbacks_per_countries("Canada Germany Finland Israel"))
-#print(query3_top_albums_by_global_playback())
-#print( query4_top_artists_by_avg_global_playbacks())
-#print(query6_most_played_between_year1_year2(2000,2012))
-#print(query7_top_song_from_top_artist_in_genre("blues"))
 
 
 def query_track(track_id):
@@ -218,9 +205,6 @@ WHERE album.album_id = {0}
 AND album.album_id = album_artist.album_id
 AND album_artist.artist_id = artist.artist_id""".format(album_id)
     return query
-
-
-print(query_album(86957))
 
 
 def query_album_tracks(album_id):

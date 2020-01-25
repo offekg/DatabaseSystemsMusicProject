@@ -84,6 +84,8 @@ const useStyles = makeStyles(theme => ({
       "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   },
   paper: {
+    overflowY: "scroll",
+    maxHeight: "70%",
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
@@ -294,12 +296,16 @@ function PlaylistManager() {
                                 <Link
                                   onClick={() => handleClickOpen(row.link_id)}
                                 >
-                                  {value}
+                                  {column.format && typeof value === "number"
+                                    ? column.format(value)
+                                    : value}
                                 </Link>
                               </div>
                             ) : (
                               <span className={classes.regularCell}>
-                                {value}
+                                {column.format && typeof value === "number"
+                                  ? column.format(value)
+                                  : value}
                               </span>
                             )}
                           </TableCell>
@@ -395,7 +401,8 @@ function UpdatePlaylistHeaders(queryNum) {
       id: "arg" + i,
       label: queryHeaders[queryNum][i - 1],
       align: "center",
-      minWidth: 100
+      minWidth: 100,
+      format: value => value.toLocaleString()
     });
   }
 }

@@ -57,7 +57,7 @@ export default function App() {
     <Container maxWidth="lg" align="center">
       <Box my={4}>
         <Typography color="primary" variant="h1" component="h1" gutterBottom>
-          <b>המעשר</b>
+          <b>המְּעַשֵׂר</b>
         </Typography>
         <div className={classes.root}>
           <Fab

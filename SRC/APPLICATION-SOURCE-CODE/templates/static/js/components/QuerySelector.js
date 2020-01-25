@@ -19,6 +19,7 @@ import { blue } from "@material-ui/core/colors";
 import Backdrop from "@material-ui/core/Backdrop";
 import TableRow from "@material-ui/core/TableRow";
 import MenuItem from "@material-ui/core/MenuItem";
+import { FormHelperText } from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
@@ -101,6 +102,8 @@ const useStyles = makeStyles(theme => ({
       "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   },
   paper: {
+    overflowY: "scroll",
+    maxHeight: "70%",
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
@@ -329,6 +332,44 @@ function PlaylistManager() {
   );
 }
 
+function validateInputs(queryNum) {
+  var isValid = true;
+  switch (queryNum) {
+    case "2":
+      if (document.getElementById("countrySelector").value === "") {
+        isValid = false;
+      }
+      break;
+    case 3:
+      if (document.getElementById("fromYear").value === "") {
+        isValid = false;
+      }
+      if (document.getElementById("toYear").value === "") {
+        isValid = false;
+      }
+      break;
+    case 4:
+      if (document.getElementById("genreSelector").value === "") {
+        isValid = false;
+      }
+      break;
+    case 5:
+      if (document.getElementById("searchByArtist").value === "") {
+        isValid = false;
+      }
+      break;
+    case 6:
+      if (document.getElementById("songByName").value === "") {
+        isValid = false;
+      }
+      break;
+    default:
+      break;
+  }
+
+  return isValid;
+}
+
 export default function MainSection() {
   const classes = useStyles();
   const [selected, setSelected] = React.useState(0);
@@ -342,10 +383,15 @@ export default function MainSection() {
   const [sendShown, setSendShown] = React.useState(<p />);
 
   const handleButtonClick = () => {
-    SetTableBody(<SkeletonLoad />);
-    setSuccess(false);
-    setLoading(true);
-    UpdatePlaylistData(document.getElementById("queryNum").value, showPlaylist);
+    if (validateInputs(document.getElementById("queryNum").value)) {
+      SetTableBody(<SkeletonLoad />);
+      setSuccess(false);
+      setLoading(true);
+      UpdatePlaylistData(
+        document.getElementById("queryNum").value,
+        showPlaylist
+      );
+    }
   };
 
   const showPlaylist = () => {
@@ -660,13 +706,23 @@ function QueryArgs2() {
     setCountryName(e.target.value);
   };
 
+  const [error, setError] = React.useState(true);
+
+  React.useEffect(() => {
+    if (document.getElementById("countrySelector").value === "") setError(true);
+    else setError(false);
+  });
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="2" />
       <div>
         <FormControl className={classes.formControl}>
-          <InputLabel id="demo-mutiple-chip-label">Select Countries</InputLabel>
+          <InputLabel error={error} required id="demo-mutiple-chip-label">
+            Select Countries
+          </InputLabel>
           <Select
+            error={error}
             labelId="demo-mutiple-chip-label"
             id="countries"
             multiple
@@ -692,6 +748,9 @@ function QueryArgs2() {
               </MenuItem>
             ))}
           </Select>
+          {error ? (
+            <FormHelperText error={error}>Don't Leave Me Empty</FormHelperText>
+          ) : null}
         </FormControl>
       </div>
     </form>
@@ -703,12 +762,25 @@ function QueryArgs3() {
 
   UpdatePlaylistHeaders(3);
 
+  const [error1, setError1] = React.useState(true);
+  const [error2, setError2] = React.useState(true);
+
+  const isError = () => {
+    if (document.getElementById("fromYear").value === "") setError1(true);
+    else setError1(false);
+
+    if (document.getElementById("toYear").value === "") setError2(true);
+    else setError2(false);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="3" />
       <div>
         <TextField
           fullWidth
+          required
+          error={error1}
           id="fromYear"
           label="From Year"
           type="number"
@@ -716,11 +788,15 @@ function QueryArgs3() {
             shrink: true
           }}
           variant="outlined"
+          onChange={e => isError()}
+          helperText={error1 ? "Don't Leave Me Empty" : null}
         />
       </div>
       <div>
         <TextField
           fullWidth
+          required
+          error={error2}
           id="toYear"
           label="To Year"
           type="number"
@@ -728,6 +804,8 @@ function QueryArgs3() {
             shrink: true
           }}
           variant="outlined"
+          onChange={e => isError()}
+          helperText={error2 ? "Don't Leave Me Empty" : null}
         />
       </div>
     </form>
@@ -739,24 +817,39 @@ function QueryArgs4() {
 
   UpdatePlaylistHeaders(4);
 
+  const [error, setError] = React.useState(true);
+
+  const isError = e => {
+    console.log(e.target.innerText === "");
+    if (document.getElementById("genreSelector").value === "") setError(true);
+    else setError(false);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="4" />
       <div>
         <Autocomplete
           fullWidth
+          error={error}
           id="genreSelector"
           options={genres}
           getOptionLabel={option => option}
           renderInput={params => (
             <TextField
               {...params}
+              required
+              error={error}
               label="Choose a Genre"
               variant="outlined"
               fullWidth
             />
           )}
+          onChange={e => isError(e)}
         />
+        {error ? (
+          <FormHelperText error={error}>Don't Leave Me Empty</FormHelperText>
+        ) : null}
       </div>
     </form>
   );
