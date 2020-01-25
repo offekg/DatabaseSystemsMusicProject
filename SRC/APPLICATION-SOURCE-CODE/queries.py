@@ -188,11 +188,12 @@ LIMIT 3""".format(artist_id)
 
 def query_artist_discography (artist_id):
     query = """
-SELECT album.name, album.release_year, album.album_id
+SELECT DISTINCT album.name, album.release_year
 FROM artist, album_artist, album
 WHERE artist.artist_id = {0}
 AND artist.artist_id = album_artist.artist_id
-AND album_artist.album_id = album.album_id""".format(artist_id)
+AND album_artist.album_id = album.album_id
+ORDER BY album.release_year""".format(artist_id)
     return query
 
 
