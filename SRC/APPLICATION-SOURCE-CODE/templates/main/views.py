@@ -29,47 +29,74 @@ def query():
 				query_args.append(current_arg)
 
 	records = regular_query(query_num, *query_args)
-	# if query_num == '2':
-	# 	for record in records:
-	# 		millis = int(record[3])
-	# 		seconds=int((millis/1000)%60)
-	# 		minutes=int((millis/(1000*60))%60)
-	# 		song_duration = F'{minutes}:{seconds}'
-	# 		record = record[:3] + (song_duration) + record[4:]
-	#
-	#
-	# records = regular_query(query_num, *query_args)
-	# if query_num == '13':
-	# 	for record in records:
-	# 		millis = int(record[2])
-	# 		seconds=int((millis/1000)%60)
-	# 		minutes=int((millis/(1000*60))%60)
-	# 		hours=int((millis/(1000*60*60))%60)
-	# 		album_duration = F'{hours}:{minutes}:{seconds}'
-	#
-	# 		millis = int(record[4])
-	# 		seconds=int((millis/1000)%60)
-	# 		minutes=int((millis/(1000*60))%60)
-	# 		song_duration = F'{minutes}:{seconds}'
-	#
-	# 		record = record[:2] + (album_duration) + record[3] + (song_duration) + record[5:]
-	#
-	# if query_num in ['14', '15', '16', '17']:
-	# 	for record in records:
-	# 		millis = int(record[2])
-	# 		seconds=int((millis/1000)%60)
-	# 		minutes=int((millis/(1000*60))%60)
-	# 		song_duration = F'{minutes}:{seconds}'
-	# 		record = record[:3] + (song_duration) + record[4:]
-	#
-	#
-	# if query_num in ['18', '20']:
-	# 	for record in records:
-	# 		millis = int(record[2])
-	# 		seconds=int((millis/1000)%60)
-	# 		minutes=int((millis/(1000*60))%60)
-	# 		song_duration = F'{minutes}:{seconds}'
-	# 		record = record[:3] + (song_duration) + record[4:]
+
+	if query_num == '2':
+		new_records = []
+
+		for record in records:
+			record_as_list = list(record)
+
+			millis = int(record_as_list[3])
+			seconds = int((millis/1000)%60)
+			minutes = int((millis/(1000*60))%60)
+			record_as_list[3] = F'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+			new_records.append(tuple(record_as_list))
+
+		records = new_records
+
+	if query_num == '13':
+		new_records = []
+
+		for record in records:
+			record_as_list = list(record)
+
+			millis = int(record_as_list[2])
+			seconds = int((millis/1000)%60)
+			minutes = int((millis/(1000*60))%60)
+			hours = int((millis/(1000*60*60))%60)
+			record_as_list[2] = F'{str(hours).zfill(2)}:{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+			millis = int(record_as_list[4])
+			seconds = int((millis/1000)%60)
+			minutes = int((millis/(1000*60))%60)
+			record_as_list[4] = F'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+			new_records.append(tuple(record_as_list))
+
+		records = new_records
+
+
+	if query_num in ['14', '15', '16', '17']:
+		new_records = []
+
+		for record in records:
+			record_as_list = list(record)
+
+			millis = int(record_as_list[2])
+			seconds = int((millis/1000)%60)
+			minutes = int((millis/(1000*60))%60)
+			record_as_list[2] = F'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+			new_records.append(tuple(record_as_list))
+
+		records = new_records
+
+
+	if query_num in ['18', '20']:
+		new_records = []
+
+		for record in records:
+			record_as_list = list(record)
+
+			millis = int(record_as_list[1])
+			seconds = int((millis/1000)%60)
+			minutes = int((millis/(1000*60))%60)
+			record_as_list[1] = F'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+			new_records.append(tuple(record_as_list))
+
+		records = new_records
 
 
 	return json.dumps(records)
@@ -81,13 +108,6 @@ def modal():
 
 	if query_type == 'song':
 		data = additional_info_song(id)
-		# for record in records:
-		# 	millis = int(record[2])
-		# 	seconds=int((millis/1000)%60)
-		# 	minutes=int((millis/(1000*60))%60)
-		# 	song_duration = F'{minutes}:{seconds}'
-		# 	record = record[:3] + (song_duration) + record[4:]
-
 		return json.dumps(data)
 
 	elif query_type == 'artist':

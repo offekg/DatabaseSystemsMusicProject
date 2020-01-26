@@ -349,7 +349,7 @@ function PlaylistManager() {
                         borderTopLeftRadius: "50%"
                       }}
                     >
-                      <img alt="reltedImage" width="100%" src={modalData[2]} />
+                      <img alt="relatedImage" width="100%" src={modalData[2]} />
                     </Paper>
                   </td>
                 </tr>

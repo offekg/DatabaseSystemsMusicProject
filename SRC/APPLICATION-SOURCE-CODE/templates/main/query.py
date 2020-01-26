@@ -89,7 +89,13 @@ def additional_info_song(id):
     response = {'name': record[0]}
 
     body = F'<b>Artist</b>: {record[1]}\n'
-    body += F'<b>Duration</b>: {record[2]}\n'
+
+    millis = int(record[2])
+    seconds = int((millis/1000)%60)
+    minutes = int((millis/(1000*60))%60)
+    duration = F'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
+
+    body += F'<b>Duration</b>: {duration}\n'
     body += F'<b>Album</b>: {record[3]}\n'
     body += F'<b>Release Year</b>: {record[4]}\n'
     body += F'<b>Genre</b>: {record[5]}\n'
