@@ -9,4 +9,4 @@
 8. Run the command: `pip install flask`
 9. Run the command: `npm install react react-dom`
 10. Run the command: `python run.py`
-11. Open your browser and enter the address: `localhost:5000`
+11. Open your browser and enter the address: `localhost:40011`
