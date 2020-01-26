@@ -83,6 +83,7 @@ def query_for_me(query_type, query_data):
         if (connection.is_connected()):
             cursor.close()
             connection.close()
+            print("MySQL connection is closed")
 
 def additional_info_song(id):
     record = query_for_me('song', id)[0]

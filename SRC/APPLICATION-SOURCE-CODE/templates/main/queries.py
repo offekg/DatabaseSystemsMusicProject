@@ -1,4 +1,6 @@
 def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2020):
+    if not year1:
+        year1=1900
     search = search_items.split(",")
     query = """
 SELECT NAME AS artist_name, birth_year, photo, artist_id
