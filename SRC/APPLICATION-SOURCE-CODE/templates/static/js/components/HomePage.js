@@ -90,7 +90,8 @@ const useStyles = makeStyles(theme => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     minWidth: "40%",
-    maxWidth: "70%"
+    maxWidth: "70%",
+    paddingLeft: "1%"
   },
   regularCell: {
     color: "black"

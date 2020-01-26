@@ -108,7 +108,8 @@ const useStyles = makeStyles(theme => ({
     minWidth: "40%",
     maxWidth: "70%",
     overflowY: "scroll",
-    maxHeight: "70%"
+    maxHeight: "70%",
+    paddingLeft: "1%"
   },
   regularCell: {
     color: "black"

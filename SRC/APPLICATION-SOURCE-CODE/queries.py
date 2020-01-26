@@ -176,7 +176,7 @@ def query_artist(artist_id):
     query = """
 SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,
 playbacks.count AS num_played, artist.photo AS artist_photo_url, artist.artist_id
-FROM artist, album_artist, album, track LEFT JOIN playbacks ON track.track_id = playbacks.track_id 
+FROM artist, album_artist, album, track LEFT JOIN playbacks ON track.track_id = playbacks.track_id
 AND playbacks.country_code = "global"
 WHERE artist.artist_id = {0}
 AND artist.artist_id = album_artist.artist_id

@@ -18,7 +18,7 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    fontFamily: "Copperplate"
+    fontFamily: "Roboto"
   }
 });
 

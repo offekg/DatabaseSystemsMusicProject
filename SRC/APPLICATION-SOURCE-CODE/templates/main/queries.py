@@ -176,13 +176,13 @@ def query_artist(artist_id):
     query = """
 SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,
 playbacks.count AS num_played, artist.photo AS artist_photo_url, artist.artist_id
-FROM artist, album_artist, album, track, playbacks
+FROM artist, album_artist, album, track LEFT JOIN playbacks ON track.track_id = playbacks.track_id
+AND playbacks.country_code = "global"
 WHERE artist.artist_id = {0}
 AND artist.artist_id = album_artist.artist_id
 AND album_artist.album_id = album.album_id
 AND track.album_id = album.album_id
-AND playbacks.country_code = "global"
-AND track.track_id = playbacks.track_id
+
 ORDER BY playbacks.count DESC
 LIMIT 3""".format(artist_id)
     return query
@@ -336,7 +336,7 @@ AND al.album_id = sinatra_songs.album_id"""
 
 
 def query_albums_by_artist_name(name):
-    full_name = name.split(",")
+    full_name = name.split(" ")
     query = """
 SELECT al.name AS album_name, ar.name AS artist_name, al.release_year AS release_year, al.album_id AS album_id
 FROM album al, album_artist ala, artist ar
@@ -352,7 +352,7 @@ LIMIT 10"""
 
 
 def query_songs_like_name(name):
-    full_name = name.split(",")
+    full_name = name.split(" ")
     query = """
 SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
 album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id

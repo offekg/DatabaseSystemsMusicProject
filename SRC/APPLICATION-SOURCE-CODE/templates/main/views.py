@@ -25,7 +25,8 @@ def query():
 	if required_args:
 		for arg in required_args:
 			current_arg = request.args.get(arg)
-			query_args.append(current_arg)
+			if current_arg:
+				query_args.append(current_arg)
 
 	records = regular_query(query_num, *query_args)
 
