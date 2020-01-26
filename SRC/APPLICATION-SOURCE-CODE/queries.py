@@ -180,6 +180,7 @@ FROM (artist LEFT JOIN album_artist ON artist.artist_id = album_artist.artist_id
 LEFT JOIN album ON album_artist.album_id = album.album_id
 LEFT JOIN track ON track.album_id = album.album_id)
 LEFT JOIN playbacks ON track.track_id = playbacks.track_id 
+FROM artist, album_artist, album, track LEFT JOIN playbacks ON track.track_id = playbacks.track_id
 AND playbacks.country_code = "global"
 WHERE artist.artist_id = {0}
 ORDER BY playbacks.count DESC
