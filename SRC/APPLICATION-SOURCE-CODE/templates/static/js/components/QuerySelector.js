@@ -102,13 +102,13 @@ const useStyles = makeStyles(theme => ({
       "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   },
   paper: {
-    overflowY: "scroll",
-    maxHeight: "70%",
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     minWidth: "40%",
-    maxWidth: "70%"
+    maxWidth: "70%",
+    overflowY: "scroll",
+    maxHeight: "70%"
   },
   regularCell: {
     color: "black"
@@ -335,12 +335,17 @@ function PlaylistManager() {
 function validateInputs(queryNum) {
   var isValid = true;
   switch (queryNum) {
+    case "1":
+      if (document.getElementById("manualWords").value === "" && document.getElementById("wordSelector").value === "") {
+        isValid = false;
+      }
+      break;
     case "2":
       if (document.getElementById("countrySelector").value === "") {
         isValid = false;
       }
       break;
-    case 3:
+    case "3":
       if (document.getElementById("fromYear").value === "") {
         isValid = false;
       }
@@ -348,17 +353,17 @@ function validateInputs(queryNum) {
         isValid = false;
       }
       break;
-    case 4:
+    case "4":
       if (document.getElementById("genreSelector").value === "") {
         isValid = false;
       }
       break;
-    case 5:
+    case "5":
       if (document.getElementById("searchByArtist").value === "") {
         isValid = false;
       }
       break;
-    case 6:
+    case "6":
       if (document.getElementById("songByName").value === "") {
         isValid = false;
       }
@@ -518,7 +523,7 @@ async function buildUrl(selected) {
     case 1:
       var searchWords = "";
       const wordSelector = document.getElementById("wordSelector").value;
-      const manualWords = document.getElementById("manualWords").value;
+      const manualWords = document.getElementById("manualWords").value.replace(/\s+/g, ",");
 
       if (!(wordSelector === "") && !(manualWords === "")) {
         searchWords = wordSelector + "," + manualWords;
@@ -621,18 +626,31 @@ function QueryArgs1() {
     setWord(e.target.value);
   };
 
+  const [error, setError] = React.useState(true);
+
+  React.useEffect(() => {
+    if (document.getElementById("wordSelector").value === "") setError(true);
+    else setError(false);
+  }, [word]);
+
+  const isError = () => {
+    if (document.getElementById("manualWords").value === "") setError(true);
+    else setError(false);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="1" />
       <div>
         <FormControl className={classes.formControl}>
-          <InputLabel id="demo-mutiple-chip-label">
+          <InputLabel error={error} id="demo-mutiple-chip-label">
             Pre-defind options
           </InputLabel>
           <Select
             labelId="demo-mutiple-chip-label"
             id="words"
             multiple
+            error={error}
             value={word}
             onChange={handleChange}
             input={<Input id="wordSelector" />}
@@ -655,15 +673,21 @@ function QueryArgs1() {
               </MenuItem>
             ))}
           </Select>
+          {error ? (
+            <FormHelperText error={error}>Dont Leave Both of us Empty</FormHelperText>
+          ) : null}
         </FormControl>
       </div>
       <div>
         <TextField
           fullWidth
+          error={error}
           id="manualWords"
           label="Enter Text To Search"
           type="search"
           variant="outlined"
+          onChange={e => isError()}
+          helperText={error ? "Don't Leave Both of us Empty" : null}
         />
       </div>
       <div>
@@ -711,7 +735,7 @@ function QueryArgs2() {
   React.useEffect(() => {
     if (document.getElementById("countrySelector").value === "") setError(true);
     else setError(false);
-  });
+  }, [countryName]);
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
@@ -749,7 +773,7 @@ function QueryArgs2() {
             ))}
           </Select>
           {error ? (
-            <FormHelperText error={error}>Don't Leave Me Empty</FormHelperText>
+            <FormHelperText error={error}>Dont Leave Me Empty</FormHelperText>
           ) : null}
         </FormControl>
       </div>
@@ -820,8 +844,7 @@ function QueryArgs4() {
   const [error, setError] = React.useState(true);
 
   const isError = e => {
-    console.log(e.target.innerText === "");
-    if (document.getElementById("genreSelector").value === "") setError(true);
+    if (e.target.textContent === "") setError(true);
     else setError(false);
   };
 
@@ -848,7 +871,7 @@ function QueryArgs4() {
           onChange={e => isError(e)}
         />
         {error ? (
-          <FormHelperText error={error}>Don't Leave Me Empty</FormHelperText>
+          <FormHelperText error={error}>Dont Leave Me Empty</FormHelperText>
         ) : null}
       </div>
     </form>
@@ -860,6 +883,13 @@ function QueryArgs5() {
 
   UpdatePlaylistHeaders(5);
 
+  const [error, setError] = React.useState(true);
+
+  const isError = () => {
+    if (document.getElementById("searchByArtist").value === "") setError(true);
+    else setError(false);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="5" />
@@ -867,10 +897,13 @@ function QueryArgs5() {
         <TextField
           fullWidth
           required
+          error={error}
           id="searchByArtist"
           label="Enter Artist Name To Search"
           type="search"
           variant="outlined"
+          helperText={error ? "Don't Leave Me Empty" : null}
+          onChange={e => isError()}
         />
       </div>
     </form>
@@ -882,6 +915,13 @@ function QueryArgs6() {
 
   UpdatePlaylistHeaders(6);
 
+  const [error, setError] = React.useState(true);
+
+  const isError = () => {
+    if (document.getElementById("songByName").value === "") setError(true);
+    else setError(false);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <input type="hidden" id="queryNum" name="queryNum" value="6" />
@@ -889,10 +929,13 @@ function QueryArgs6() {
         <TextField
           fullWidth
           required
+          error={error}
           id="songByName"
           label="Enter Text To Search"
           type="search"
           variant="outlined"
+          helperText={error ? "Don't Leave Me Empty" : null}
+          onChange={e => isError()}
         />
       </div>
     </form>
