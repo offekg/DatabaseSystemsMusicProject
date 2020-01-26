@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import React from "react";
 import Fab from "@material-ui/core/Fab";
-import Box from "@material-ui/core/Box";
 import Zoom from "@material-ui/core/Zoom";
 import Chip from "@material-ui/core/Chip";
 import Link from "@material-ui/core/Link";
@@ -10,7 +9,6 @@ import Input from "@material-ui/core/Input";
 import Table from "@material-ui/core/Table";
 import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
-import Rating from "@material-ui/lab/Rating";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import ReactHtmlParser from "react-html-parser";
@@ -25,7 +23,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
-import Typography from "@material-ui/core/Typography";
 import FormControl from "@material-ui/core/FormControl";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -120,19 +117,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const labels = {
-  0.5: "Useless",
-  1: "Useless+",
-  1.5: "Poor",
-  2: "Poor+",
-  2.5: "Ok",
-  3: "Ok+",
-  3.5: "Good",
-  4: "Good+",
-  4.5: "Excellent",
-  5: "Excellent+"
-};
-
 function createData(arg1, arg2, arg3, arg4, arg5, link_id) {
   return { arg1, arg2, arg3, arg4, arg5, link_id };
 }
@@ -140,15 +124,6 @@ function createData(arg1, arg2, arg3, arg4, arg5, link_id) {
 var columns = [];
 var rows = [];
 var modalData = [];
-
-function IconContainer(props) {
-  const { value, ...other } = props;
-  return (
-    <Tooltip title={labels[value] || ""}>
-      <span {...other} />
-    </Tooltip>
-  );
-}
 
 function SendButton(props) {
   const classes = useStyles();
@@ -171,8 +146,6 @@ function SendButton(props) {
 
 function PlaylistManager() {
   const classes = useStyles();
-
-  const [value, setValue] = React.useState(2.5);
 
   var delay = -200;
 
@@ -245,14 +218,19 @@ function PlaylistManager() {
                             {column.id === "arg1" ? (
                               <div>
                                 <Link
+                                  style={{ cursor: "pointer" }}
                                   onClick={() => handleClickOpen(row.link_id)}
                                 >
-                                  {value}
+                                  {column.format && typeof value === "number"
+                                    ? column.format(value)
+                                    : value}
                                 </Link>
                               </div>
                             ) : (
                               <span className={classes.regularCell}>
-                                {value}
+                                {column.format && typeof value === "number"
+                                  ? column.format(value)
+                                  : value}
                               </span>
                             )}
                           </TableCell>
@@ -312,23 +290,6 @@ function PlaylistManager() {
           </Fade>
         </Modal>
       </div>
-
-      <div align="center">
-        <Zoom in="true" style={{ transitionDelay: true ? "2000ms" : "0ms" }}>
-          <Box fullWidth component="fieldset" mb={3} borderColor="transparent">
-            <Typography>Rate this playlist:</Typography>
-            <Rating
-              name="hover-tooltip"
-              value={value}
-              onChange={(event, newValue) => {
-                setValue(newValue);
-              }}
-              precision={0.5}
-              IconContainerComponent={IconContainer}
-            />
-          </Box>
-        </Zoom>
-      </div>
     </div>
   );
 }
@@ -337,7 +298,10 @@ function validateInputs(queryNum) {
   var isValid = true;
   switch (queryNum) {
     case "1":
-      if (document.getElementById("manualWords").value === "" && document.getElementById("wordSelector").value === "") {
+      if (
+        document.getElementById("manualWords").value === "" &&
+        document.getElementById("wordSelector").value === ""
+      ) {
         isValid = false;
       }
       break;
@@ -524,7 +488,9 @@ async function buildUrl(selected) {
     case 1:
       var searchWords = "";
       const wordSelector = document.getElementById("wordSelector").value;
-      const manualWords = document.getElementById("manualWords").value.replace(/\s+/g, ",");
+      const manualWords = document
+        .getElementById("manualWords")
+        .value.replace(/\s+/g, ",");
 
       if (!(wordSelector === "") && !(manualWords === "")) {
         searchWords = wordSelector + "," + manualWords;
@@ -610,7 +576,8 @@ function UpdatePlaylistHeaders(queryNum) {
       id: "arg" + i,
       label: queryHeaders[queryNum][i - 1],
       align: "center",
-      minWidth: 100
+      minWidth: 100,
+      format: value => value.toLocaleString()
     });
   }
 }
@@ -675,7 +642,9 @@ function QueryArgs1() {
             ))}
           </Select>
           {error ? (
-            <FormHelperText error={error}>Dont Leave Both of us Empty</FormHelperText>
+            <FormHelperText error={error}>
+              Dont Leave Both of us Empty
+            </FormHelperText>
           ) : null}
         </FormControl>
       </div>
@@ -800,7 +769,8 @@ function QueryArgs3() {
 
   return (
     <form className={classes.root} noValidate autoComplete="off">
-      <input type="hidden" id="queryNum" name="queryNum" value="3" />
+      <input type="hidden" id="queryNum" name="queryNum" value="3" />* Data
+      starts from 2014.
       <div>
         <TextField
           fullWidth

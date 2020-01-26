@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: theme.shadows[5],
     minWidth: "40%",
     maxWidth: "70%",
-    paddingLeft: "1%"
+    paddingLeft: "5%"
   },
   regularCell: {
     color: "black"
@@ -295,6 +295,7 @@ function PlaylistManager() {
                             {column.id === "arg1" ? (
                               <div>
                                 <Link
+                                  style={{ cursor: "pointer" }}
                                   onClick={() => handleClickOpen(row.link_id)}
                                 >
                                   {column.format && typeof value === "number"
@@ -350,7 +351,7 @@ function PlaylistManager() {
                         borderTopLeftRadius: "50%"
                       }}
                     >
-                      <img alt="relatedImage" width="100%" src={modalData[2]} />
+                      <img alt="reltedImage" width="100%" src={modalData[2]} />
                     </Paper>
                   </td>
                 </tr>

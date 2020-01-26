@@ -1,6 +1,8 @@
-def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2020):
+def query1_full_text_artist_bio_search(search_items, year1=1900, year2=2100):
     if not year1:
-        year1=1900
+        year1 = 1900
+    if not year2:
+        year2 = 2100
     search = search_items.split(",")
     query = """
 SELECT NAME AS artist_name, birth_year, photo, artist_id
@@ -176,19 +178,18 @@ def query_artist(artist_id):
     query = """
 SELECT artist.name AS artist_name, artist.bio AS artist_bio, track.name AS most_played_song_global,
 playbacks.count AS num_played, artist.photo AS artist_photo_url, artist.artist_id
-FROM artist, album_artist, album, track LEFT JOIN playbacks ON track.track_id = playbacks.track_id
+FROM (artist LEFT JOIN album_artist ON artist.artist_id = album_artist.artist_id
+LEFT JOIN album ON album_artist.album_id = album.album_id
+LEFT JOIN track ON track.album_id = album.album_id)
+LEFT JOIN playbacks ON track.track_id = playbacks.track_id
 AND playbacks.country_code = "global"
 WHERE artist.artist_id = {0}
-AND artist.artist_id = album_artist.artist_id
-AND album_artist.album_id = album.album_id
-AND track.album_id = album.album_id
-
 ORDER BY playbacks.count DESC
 LIMIT 3""".format(artist_id)
     return query
 
 
-def query_artist_discography (artist_id):
+def query_artist_discography(artist_id):
     query = """
 SELECT DISTINCT album.name, album.release_year
 FROM artist, album_artist, album

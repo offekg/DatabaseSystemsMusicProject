@@ -113,12 +113,14 @@ def additional_info_artist(id):
     response = {'name': bio[0]}
 
     body = F'<b>Bio</b>: {bio[1]}\n'
-    body += F'<b>Most Played Song</b>: {bio[2]} ({bio[3]} Times)\n'
-    body += F'<b>Discography</b>:\n'
-    body += F'<table><tr><th>Name</th><th>Year Released</th></tr>\n'
-    for album in discs:
-        body += F'<tr><td>{album[0]}</td><td>{album[1]}</td></tr>\n'
-    body += '</table>'
+    if bio[3]:
+        body += F'<b>Most Played Song</b>: {bio[2]} ({bio[3]} Times)\n'
+    if discs:
+        body += F'<b>Discography</b>:\n'
+        body += F'<table><tr><th>Name</th><th>Year Released</th></tr>\n'
+        for album in discs:
+            body += F'<tr><td>{album[0]}</td><td>{album[1]}</td></tr>\n'
+        body += '</table>'
 
     response['body'] = body
     response['image'] = bio[4]
