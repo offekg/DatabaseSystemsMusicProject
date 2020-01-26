@@ -134,8 +134,22 @@ def additional_info_album(id):
     body += F'<b>Release Year</b>: {info[2]}\n'
     body += F'<b>Genre</b>: {info[3]}\n'
     body += F'<b>Songs</b>:\n'
+
+    disc_count = ord('a')
+    last_song_number_seen = '0'
+    songs_numbers = [song[0] for song in songs]
+
     for song in songs:
-        body += F'Track #{song[0]} - {song[1]}\n'
+        if last_song_number_seen != song[0]:
+            disc_count = ord('a')
+            last_song_number_seen = song[0]
+
+        if songs_numbers.count(song[0]) > 1:
+            body += F'Track #{song[0]}{chr(disc_count)} - {song[1]}\n'
+            disc_count += 1
+        else:
+            body += F'Track #{song[0]} - {song[1]}\n'
+
 
     response['body'] = body
     response['image'] = info[4]
