@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: theme.shadows[5],
     minWidth: "40%",
     maxWidth: "70%",
-    paddingLeft: "5%"
+    paddingLeft: "1%"
   },
   regularCell: {
     color: "black"
@@ -351,7 +351,7 @@ function PlaylistManager() {
                         borderTopLeftRadius: "50%"
                       }}
                     >
-                      <img alt="reltedImage" width="100%" src={modalData[2]} />
+                      <img alt="relatedImage" width="100%" src={modalData[2]} />
                     </Paper>
                   </td>
                 </tr>
