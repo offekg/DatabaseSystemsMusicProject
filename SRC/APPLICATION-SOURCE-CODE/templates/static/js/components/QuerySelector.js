@@ -588,7 +588,7 @@ function UpdateModalData(queryType, id, _callback) {
 }
 
 const queryHeaders = {
-  1: ["Name", "Birth Year", "Photo"],
+  1: ["Name", "Birth Year"],
   2: ["Name", "Times Played", "Artist", "Duration", "Album"],
   3: ["Name", "Artist", "Album", "Release year", "Times Played"],
   4: [
@@ -683,7 +683,7 @@ function QueryArgs1() {
           fullWidth
           error={error}
           id="manualWords"
-          label="Enter Text To Search"
+          label="Enter Words to Search, divided by Spaces"
           type="search"
           variant="outlined"
           onChange={e => isError()}
