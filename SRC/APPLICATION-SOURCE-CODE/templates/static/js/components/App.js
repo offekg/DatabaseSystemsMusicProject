@@ -27,10 +27,7 @@ const useStyles = makeStyles(theme => ({
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{" "}
+      {"Copyright © Timor Eizenman, Offek Gil, Ido Lerer, Yael Lerech - "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
