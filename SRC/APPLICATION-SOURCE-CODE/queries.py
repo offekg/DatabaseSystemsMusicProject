@@ -352,7 +352,7 @@ LIMIT 10"""
 
 
 def query_songs_like_name(name):
-    full_name = name.split(",")
+    full_name = name.split(" ")
     query = """
 SELECT track.name AS track_name, artist.name AS artist_name, album.name AS album_name,
 album.release_year AS release_year, album.genre AS genre, track.track_id AS track_id
