@@ -19,7 +19,7 @@
     "webpack": "^4.23.1",
     "react-dom": "^16.6.0",
     "babel-core": "^6.7.6",
-    "webpack-cli": "^3.1.2",
+    "webpack-cli": "^3.3.12",
     "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.0.16",
     "react-html-parser": "2.0.2",
